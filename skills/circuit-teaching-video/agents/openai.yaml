@@ -1,0 +1,4 @@
+interface:
+  display_name: "Circuit Teaching Video"
+  short_description: "Source-faithful circuit lessons on persistent whiteboards"
+  default_prompt: "Use $circuit-teaching-video to plan and produce the requested circuit explanation, preserving model assumptions, semantic identity and honest quality checks."

@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "id": "circuit-symbols-v1",
+  "unknown_policy": "neutral",
+  "legend": false,
+  "identity_glow": false,
+  "attention_color": "#fa2647",
+  "symbols": {
+    "gm": {
+      "latex": "g_m",
+      "color": "#2464B5",
+      "role": "transconductance"
+    },
+    "gmb": {
+      "latex": "g_{mb}",
+      "color": "#7553A6",
+      "role": "body_transconductance"
+    },
+    "ro": {
+      "latex": "r_o",
+      "color": "#9A6500",
+      "role": "device_output_resistance"
+    },
+    "RD": {
+      "latex": "R_D",
+      "color": "#16754A",
+      "role": "drain_load"
+    },
+    "Rin": {
+      "latex": "R_{\\mathrm{in}}",
+      "color": "#007E87",
+      "role": "input_resistance"
+    },
+    "RT": {
+      "latex": "R_T",
+      "color": "#8C4E2C",
+      "role": "transimpedance"
+    },
+    "CT": {
+      "latex": "C_T",
+      "color": "#2464b5",
+      "role": "total_capacitance"
+    },
+    "RF": {
+      "latex": "R_F",
+      "color": "#16754a",
+      "role": "feedback_resistance"
+    }
+  }
+}

@@ -1,0 +1,1265 @@
+{
+  "schema_version": "circuit-lesson-1",
+  "title": "An unloaded resistor divider",
+  "duration": 8,
+  "sources": [
+    {
+      "id": "original",
+      "locator": "Original synthetic demonstration created for this repository",
+      "basis": "Ohm law and Kirchhoff voltage law; no external lesson assets"
+    }
+  ],
+  "required_capabilities": [
+    "frozen_scene",
+    "cumulative_objects",
+    "semantic_actions",
+    "direct_pan",
+    "closing_pullback",
+    "full_frame_receipts",
+    "internal_subtitle_strip"
+  ],
+  "knowledge_graph": {
+    "nodes": [
+      {
+        "id": "model",
+        "statement": "An ideal voltage source drives two series resistors with no output load",
+        "source_refs": [
+          "original"
+        ]
+      },
+      {
+        "id": "derive",
+        "statement": "The same series current flows through both resistors",
+        "source_refs": [
+          "original"
+        ]
+      },
+      {
+        "id": "evaluate",
+        "statement": "Equal resistors divide an ideal input voltage by two",
+        "source_refs": [
+          "original"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "model",
+        "to": "derive",
+        "type": "prerequisite"
+      },
+      {
+        "from": "derive",
+        "to": "evaluate",
+        "type": "prerequisite"
+      }
+    ]
+  },
+  "layout_contract": {
+    "schema_version": "whiteboard-layout-1",
+    "whiteboard": [
+      2,
+      2,
+      1916,
+      1076
+    ],
+    "world_viewport": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "content_clip": [
+      0,
+      0,
+      1920,
+      956
+    ],
+    "subtitle_zone": [
+      48,
+      968,
+      1824,
+      96
+    ],
+    "subtitles": {
+      "font_size": 34,
+      "minimum_font_size": 34,
+      "max_lines": 2,
+      "line_height": 44,
+      "horizontal_padding": 14,
+      "font_weight": 400,
+      "font_family": "Noto Sans CJK SC",
+      "color": "#252a30"
+    },
+    "metadata": {
+      "minimum_font_size": 22,
+      "max_lines_per_object": 2,
+      "line_gap": 5,
+      "object_gap": 10,
+      "source_minimum_font_size": 19
+    },
+    "board_zones": {
+      "title": [
+        0.03,
+        0.02,
+        0.45,
+        0.14
+      ],
+      "metadata": [
+        0.505,
+        0.025,
+        0.47,
+        0.13
+      ],
+      "body": [
+        0.03,
+        0.17,
+        0.94,
+        0.68
+      ],
+      "subtitle_reserve": [
+        0,
+        0.885,
+        1,
+        0.115
+      ]
+    },
+    "world_border_policy": "overview_only",
+    "caption_anchor": "screen_inside_persistent_whiteboard",
+    "overflow_policy": "reject_not_shrink"
+  },
+  "boards": [
+    {
+      "id": "model",
+      "bounds": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "object_refs": [
+        "model.border",
+        "model.title",
+        "model.note",
+        "model.source",
+        "model.upper-wire",
+        "model.r1",
+        "model.middle-wire",
+        "model.out-wire",
+        "model.r2",
+        "model.lower-wire",
+        "model.ground0",
+        "model.ground1",
+        "model.ground2",
+        "model.vin",
+        "model.r1-label",
+        "model.vout",
+        "model.r2-label",
+        "model.current",
+        "model.divider",
+        "model.why"
+      ],
+      "layout": {
+        "title_objects": [
+          "model.title"
+        ],
+        "metadata_objects": [
+          "model.note",
+          "model.source"
+        ],
+        "border_object": "model.border"
+      }
+    },
+    {
+      "id": "result",
+      "bounds": [
+        2200,
+        0,
+        1920,
+        1080
+      ],
+      "object_refs": [
+        "result.border",
+        "result.title",
+        "result.note",
+        "result.source",
+        "result.upper-wire",
+        "result.r1",
+        "result.middle-wire",
+        "result.out-wire",
+        "result.r2",
+        "result.lower-wire",
+        "result.ground0",
+        "result.ground1",
+        "result.ground2",
+        "result.vin",
+        "result.r1-label",
+        "result.vout",
+        "result.r2-label",
+        "result.equal",
+        "result.half",
+        "result.value"
+      ],
+      "layout": {
+        "title_objects": [
+          "result.title"
+        ],
+        "metadata_objects": [
+          "result.note",
+          "result.source"
+        ],
+        "border_object": "result.border"
+      }
+    }
+  ],
+  "objects": [
+    {
+      "id": "model.border",
+      "kind": "rect",
+      "world_bounds": [
+        2,
+        2,
+        1916,
+        1076
+      ],
+      "start": 0,
+      "end": 8,
+      "stroke": "#bfd0de",
+      "width": 2
+    },
+    {
+      "id": "model.title",
+      "kind": "text",
+      "text": "1. Define the circuit",
+      "xy": [
+        70,
+        40
+      ],
+      "world_bounds": [
+        70,
+        40,
+        1,
+        1
+      ],
+      "size": 42,
+      "typography_role": "title",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.note",
+      "kind": "text",
+      "text": "Assumptions: ideal source; no load",
+      "xy": [
+        1000,
+        30
+      ],
+      "world_bounds": [
+        1000,
+        30,
+        1,
+        1
+      ],
+      "size": 22,
+      "typography_role": "note",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.source",
+      "kind": "text",
+      "text": "Original synthetic example",
+      "xy": [
+        1000,
+        75
+      ],
+      "world_bounds": [
+        1000,
+        75,
+        1,
+        1
+      ],
+      "size": 19,
+      "typography_role": "source",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.upper-wire",
+      "kind": "line",
+      "points": [
+        [
+          400,
+          230
+        ],
+        [
+          400,
+          290
+        ]
+      ],
+      "world_bounds": [
+        400,
+        230,
+        1,
+        60
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.r1",
+      "kind": "line",
+      "points": [
+        [
+          400,
+          290
+        ],
+        [
+          380,
+          310
+        ],
+        [
+          420,
+          340
+        ],
+        [
+          380,
+          370
+        ],
+        [
+          420,
+          400
+        ],
+        [
+          400,
+          420
+        ]
+      ],
+      "world_bounds": [
+        380,
+        290,
+        40,
+        130
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.middle-wire",
+      "kind": "line",
+      "points": [
+        [
+          400,
+          420
+        ],
+        [
+          400,
+          520
+        ]
+      ],
+      "world_bounds": [
+        400,
+        420,
+        1,
+        100
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.out-wire",
+      "kind": "line",
+      "points": [
+        [
+          400,
+          470
+        ],
+        [
+          650,
+          470
+        ]
+      ],
+      "world_bounds": [
+        400,
+        470,
+        250,
+        1
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.r2",
+      "kind": "line",
+      "points": [
+        [
+          400,
+          520
+        ],
+        [
+          380,
+          540
+        ],
+        [
+          420,
+          570
+        ],
+        [
+          380,
+          600
+        ],
+        [
+          420,
+          630
+        ],
+        [
+          400,
+          650
+        ]
+      ],
+      "world_bounds": [
+        380,
+        520,
+        40,
+        130
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.lower-wire",
+      "kind": "line",
+      "points": [
+        [
+          400,
+          650
+        ],
+        [
+          400,
+          720
+        ]
+      ],
+      "world_bounds": [
+        400,
+        650,
+        1,
+        70
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.ground0",
+      "kind": "line",
+      "points": [
+        [
+          360.0,
+          720
+        ],
+        [
+          440.0,
+          720
+        ]
+      ],
+      "world_bounds": [
+        360.0,
+        720,
+        80.0,
+        1
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.ground1",
+      "kind": "line",
+      "points": [
+        [
+          375.0,
+          732
+        ],
+        [
+          425.0,
+          732
+        ]
+      ],
+      "world_bounds": [
+        375.0,
+        732,
+        50.0,
+        1
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.ground2",
+      "kind": "line",
+      "points": [
+        [
+          390.0,
+          744
+        ],
+        [
+          410.0,
+          744
+        ]
+      ],
+      "world_bounds": [
+        390.0,
+        744,
+        20.0,
+        1
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.vin",
+      "kind": "text",
+      "text": "Vin",
+      "xy": [
+        320,
+        190
+      ],
+      "world_bounds": [
+        320,
+        190,
+        1,
+        1
+      ],
+      "size": 32,
+      "typography_role": "body",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.r1-label",
+      "kind": "text",
+      "text": "R1",
+      "xy": [
+        470,
+        335
+      ],
+      "world_bounds": [
+        470,
+        335,
+        1,
+        1
+      ],
+      "size": 32,
+      "typography_role": "body",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.vout",
+      "kind": "text",
+      "text": "Vout",
+      "xy": [
+        665,
+        442
+      ],
+      "world_bounds": [
+        665,
+        442,
+        1,
+        1
+      ],
+      "size": 32,
+      "typography_role": "body",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.r2-label",
+      "kind": "text",
+      "text": "R2",
+      "xy": [
+        470,
+        570
+      ],
+      "world_bounds": [
+        470,
+        570,
+        1,
+        1
+      ],
+      "size": 32,
+      "typography_role": "body",
+      "start": 0,
+      "end": 8
+    },
+    {
+      "id": "model.current",
+      "kind": "formula",
+      "latex": "I=\\frac{V_{\\mathrm{in}}}{R_1+R_2}",
+      "world_bounds": [
+        1050,
+        270,
+        1,
+        1
+      ],
+      "font_size": 46,
+      "start": 0.5,
+      "duration": 0.5,
+      "read_window": [
+        1.0,
+        2.0
+      ],
+      "end": 8
+    },
+    {
+      "id": "model.divider",
+      "kind": "formula",
+      "latex": "V_{\\mathrm{out}}=I R_2=V_{\\mathrm{in}}\\frac{R_2}{R_1+R_2}",
+      "world_bounds": [
+        1050,
+        490,
+        1,
+        1
+      ],
+      "font_size": 46,
+      "start": 1.3,
+      "duration": 0.5,
+      "read_window": [
+        1.8,
+        2.8
+      ],
+      "end": 8
+    },
+    {
+      "id": "model.why",
+      "kind": "text",
+      "text": "One current, two voltage drops.",
+      "xy": [
+        1050,
+        700
+      ],
+      "world_bounds": [
+        1050,
+        700,
+        1,
+        1
+      ],
+      "size": 32,
+      "typography_role": "body",
+      "start": 1.8,
+      "end": 8
+    },
+    {
+      "id": "result.border",
+      "kind": "rect",
+      "world_bounds": [
+        2202,
+        2,
+        1916,
+        1076
+      ],
+      "start": 4,
+      "end": 8,
+      "stroke": "#bfd0de",
+      "width": 2
+    },
+    {
+      "id": "result.title",
+      "kind": "text",
+      "text": "2. Evaluate the divider",
+      "xy": [
+        2270,
+        40
+      ],
+      "world_bounds": [
+        2270,
+        40,
+        1,
+        1
+      ],
+      "size": 42,
+      "typography_role": "title",
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.note",
+      "kind": "text",
+      "text": "Assumptions: ideal source; no load",
+      "xy": [
+        3200,
+        30
+      ],
+      "world_bounds": [
+        3200,
+        30,
+        1,
+        1
+      ],
+      "size": 22,
+      "typography_role": "note",
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.source",
+      "kind": "text",
+      "text": "Original synthetic example",
+      "xy": [
+        3200,
+        75
+      ],
+      "world_bounds": [
+        3200,
+        75,
+        1,
+        1
+      ],
+      "size": 19,
+      "typography_role": "source",
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.upper-wire",
+      "kind": "line",
+      "points": [
+        [
+          2600,
+          230
+        ],
+        [
+          2600,
+          290
+        ]
+      ],
+      "world_bounds": [
+        2600,
+        230,
+        1,
+        60
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.r1",
+      "kind": "line",
+      "points": [
+        [
+          2600,
+          290
+        ],
+        [
+          2580,
+          310
+        ],
+        [
+          2620,
+          340
+        ],
+        [
+          2580,
+          370
+        ],
+        [
+          2620,
+          400
+        ],
+        [
+          2600,
+          420
+        ]
+      ],
+      "world_bounds": [
+        2580,
+        290,
+        40,
+        130
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.middle-wire",
+      "kind": "line",
+      "points": [
+        [
+          2600,
+          420
+        ],
+        [
+          2600,
+          520
+        ]
+      ],
+      "world_bounds": [
+        2600,
+        420,
+        1,
+        100
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.out-wire",
+      "kind": "line",
+      "points": [
+        [
+          2600,
+          470
+        ],
+        [
+          2850,
+          470
+        ]
+      ],
+      "world_bounds": [
+        2600,
+        470,
+        250,
+        1
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.r2",
+      "kind": "line",
+      "points": [
+        [
+          2600,
+          520
+        ],
+        [
+          2580,
+          540
+        ],
+        [
+          2620,
+          570
+        ],
+        [
+          2580,
+          600
+        ],
+        [
+          2620,
+          630
+        ],
+        [
+          2600,
+          650
+        ]
+      ],
+      "world_bounds": [
+        2580,
+        520,
+        40,
+        130
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.lower-wire",
+      "kind": "line",
+      "points": [
+        [
+          2600,
+          650
+        ],
+        [
+          2600,
+          720
+        ]
+      ],
+      "world_bounds": [
+        2600,
+        650,
+        1,
+        70
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.ground0",
+      "kind": "line",
+      "points": [
+        [
+          2560.0,
+          720
+        ],
+        [
+          2640.0,
+          720
+        ]
+      ],
+      "world_bounds": [
+        2560.0,
+        720,
+        80.0,
+        1
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.ground1",
+      "kind": "line",
+      "points": [
+        [
+          2575.0,
+          732
+        ],
+        [
+          2625.0,
+          732
+        ]
+      ],
+      "world_bounds": [
+        2575.0,
+        732,
+        50.0,
+        1
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.ground2",
+      "kind": "line",
+      "points": [
+        [
+          2590.0,
+          744
+        ],
+        [
+          2610.0,
+          744
+        ]
+      ],
+      "world_bounds": [
+        2590.0,
+        744,
+        20.0,
+        1
+      ],
+      "stroke": "#252a30",
+      "width": 3,
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.vin",
+      "kind": "text",
+      "text": "Vin",
+      "xy": [
+        2520,
+        190
+      ],
+      "world_bounds": [
+        2520,
+        190,
+        1,
+        1
+      ],
+      "size": 32,
+      "typography_role": "body",
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.r1-label",
+      "kind": "text",
+      "text": "R1",
+      "xy": [
+        2670,
+        335
+      ],
+      "world_bounds": [
+        2670,
+        335,
+        1,
+        1
+      ],
+      "size": 32,
+      "typography_role": "body",
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.vout",
+      "kind": "text",
+      "text": "Vout",
+      "xy": [
+        2865,
+        442
+      ],
+      "world_bounds": [
+        2865,
+        442,
+        1,
+        1
+      ],
+      "size": 32,
+      "typography_role": "body",
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.r2-label",
+      "kind": "text",
+      "text": "R2",
+      "xy": [
+        2670,
+        570
+      ],
+      "world_bounds": [
+        2670,
+        570,
+        1,
+        1
+      ],
+      "size": 32,
+      "typography_role": "body",
+      "start": 4,
+      "end": 8
+    },
+    {
+      "id": "result.equal",
+      "kind": "formula",
+      "latex": "R_1=R_2=10\\,\\mathrm{k}\\Omega",
+      "world_bounds": [
+        3250,
+        270,
+        1,
+        1
+      ],
+      "font_size": 46,
+      "start": 4.2,
+      "duration": 0.5,
+      "read_window": [
+        4.7,
+        5.7
+      ],
+      "end": 8
+    },
+    {
+      "id": "result.half",
+      "kind": "formula",
+      "latex": "V_{\\mathrm{out}}=\\frac{1}{2}V_{\\mathrm{in}}",
+      "world_bounds": [
+        3250,
+        490,
+        1,
+        1
+      ],
+      "font_size": 46,
+      "start": 5,
+      "duration": 0.5,
+      "read_window": [
+        5.5,
+        6.5
+      ],
+      "end": 8
+    },
+    {
+      "id": "result.value",
+      "kind": "text",
+      "text": "For Vin = 6 V, Vout = 3 V.",
+      "xy": [
+        3250,
+        700
+      ],
+      "world_bounds": [
+        3250,
+        700,
+        1,
+        1
+      ],
+      "size": 32,
+      "typography_role": "body",
+      "start": 5.5,
+      "end": 8
+    }
+  ],
+  "camera_track": [
+    {
+      "start": 0,
+      "end": 3,
+      "from": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "to": [
+        0,
+        0,
+        1920,
+        1080
+      ]
+    },
+    {
+      "start": 3,
+      "end": 4,
+      "from": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "to": [
+        2200,
+        0,
+        1920,
+        1080
+      ]
+    },
+    {
+      "start": 4,
+      "end": 7,
+      "from": [
+        2200,
+        0,
+        1920,
+        1080
+      ],
+      "to": [
+        2200,
+        0,
+        1920,
+        1080
+      ]
+    },
+    {
+      "start": 7,
+      "end": 8,
+      "from": [
+        2200,
+        0,
+        1920,
+        1080
+      ],
+      "to": [
+        0,
+        -150,
+        4120,
+        2317.5
+      ]
+    }
+  ],
+  "captions": [
+    {
+      "id": "caption-model",
+      "start": 0,
+      "end": 3,
+      "display_text": "Model: ideal source, positive resistors, and no output load."
+    },
+    {
+      "id": "caption-transfer",
+      "start": 4,
+      "end": 7,
+      "display_text": "Equal resistors give one half of the input voltage."
+    },
+    {
+      "id": "caption-summary",
+      "start": 7,
+      "end": 8,
+      "display_text": "The full derivation remains on the persistent canvas."
+    }
+  ],
+  "teacher_actions": [
+    {
+      "id": "focus-divider",
+      "kind": "frame",
+      "target": "model.divider",
+      "start": 2,
+      "end": 2.8
+    },
+    {
+      "id": "focus-half",
+      "kind": "frame",
+      "target": "result.half",
+      "start": 5.7,
+      "end": 6.7
+    }
+  ],
+  "required_object_ids": [
+    "model.border",
+    "model.title",
+    "model.note",
+    "model.source",
+    "model.upper-wire",
+    "model.r1",
+    "model.middle-wire",
+    "model.out-wire",
+    "model.r2",
+    "model.lower-wire",
+    "model.ground0",
+    "model.ground1",
+    "model.ground2",
+    "model.vin",
+    "model.r1-label",
+    "model.vout",
+    "model.r2-label",
+    "model.current",
+    "model.divider",
+    "model.why",
+    "result.border",
+    "result.title",
+    "result.note",
+    "result.source",
+    "result.upper-wire",
+    "result.r1",
+    "result.middle-wire",
+    "result.out-wire",
+    "result.r2",
+    "result.lower-wire",
+    "result.ground0",
+    "result.ground1",
+    "result.ground2",
+    "result.vin",
+    "result.r1-label",
+    "result.vout",
+    "result.r2-label",
+    "result.equal",
+    "result.half",
+    "result.value"
+  ]
+}

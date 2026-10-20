@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env*
+build/
+dist/
+output/
+*.mp4
+*.wav
+*.mp3
+*.pdf
+*.ttf
+*.otf
+*.ttc

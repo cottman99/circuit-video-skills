@@ -1,0 +1,6 @@
+# Exact versions exercised in the local release check; not a cross-platform lock.
+Pillow==12.3.0
+numpy==2.3.5
+scipy==1.17.0
+matplotlib==3.10.8
+fonttools==4.61.1

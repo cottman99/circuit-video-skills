@@ -1,0 +1,48 @@
+{
+  "test_run": "2026-10-20",
+  "unit_and_negative_tests": {
+    "passed": 33,
+    "failed": 0,
+    "optional_pdf_tests_executed": true,
+    "live_tts_executed": false,
+    "offline_voice_cache_tests_executed": true,
+    "native_caption_math_test_executed": true
+  },
+  "skill_frontmatter": "PASS",
+  "native_stills": {
+    "resolution": [
+      3840,
+      2160
+    ],
+    "frames": 2,
+    "visual_review": "Two synthetic example stills inspected; not a full audiovisual review"
+  },
+  "video_smoke": {
+    "resolution": [
+      640,
+      360
+    ],
+    "fps": 15,
+    "duration_seconds": 8,
+    "encoded_frames": 120,
+    "decoded_frames": 120,
+    "full_decode": "PASS",
+    "every_frame_geometry": "PASS",
+    "audio": "silent",
+    "media_sha256": "2453861d754c138125855425e4ce7502b7d7dabd263b0804fb756ca3d5ee0df8",
+    "scene_digest": "b84b8bba43302559b423df0210862a5e8881dab52080984f8b94767eecd0329e"
+  },
+  "dependencies_tested": {
+    "Pillow": "12.3.0",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "matplotlib": "3.10.8",
+    "fonttools": "4.61.1",
+    "PyMuPDF": "1.26.6"
+  },
+  "limitations": [
+    "No live network TTS was requested or exercised.",
+    "No independent scientific, human listening or learning-outcome certification.",
+    "No private course assets are part of the release."
+  ]
+}
