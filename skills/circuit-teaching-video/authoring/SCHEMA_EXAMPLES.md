@@ -1,3 +1,5 @@
+> Original-slide is the default. Its shape is in [ORIGINAL_SLIDE.md](ORIGINAL_SLIDE.md). The examples below describe the explicitly selected legacy whiteboard mode.
+
 # Author response shape
 
 This is schema documentation, not a runnable lesson, golden response or fallback. Angle-bracket values below must be replaced from the newly supplied source. No actual lecture, formula, crop coordinates or presentation positions are prescribed here. All selected physical PDF pages must be retained.

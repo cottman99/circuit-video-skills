@@ -1,0 +1,22 @@
+{
+  "schema_version": "original-slide-profile-1",
+  "width": 1600,
+  "fps": 60,
+  "reveal_seconds": 0.5,
+  "move_seconds": 0.28,
+  "minimum_dwell_seconds": 0.25,
+  "minimum_complete_page_seconds": 0.5,
+  "edge_clearance_pixels": 2,
+  "caption_band_minimum": 130,
+  "caption_font_size": 31,
+  "caption_line_height": 43,
+  "caption_horizontal_padding": 40,
+  "caption_max_lines": 2,
+  "max_caption_codepoints_per_second": 8,
+  "pointer_radius": 10,
+  "pointer_clearance": 13,
+  "pointer_color": [233,37,70],
+  "highlight_fill": [240,246,255],
+  "highlight_outline": [141,173,214],
+  "mask_scope": "Explicit uniform-background semantic regions with clear boundary margins; complex image backgrounds require supplied object alpha/background layers and are not supported by this adapter"
+}

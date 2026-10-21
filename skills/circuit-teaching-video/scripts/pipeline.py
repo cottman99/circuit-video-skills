@@ -156,8 +156,8 @@ def verify_scene(scene):
     require(scene['runtime']==runtime_bindings(),'Runtime or fonts changed; recompile authored input')
     layout.validate_scene_layout(scene)
 
-def render(scene,out,width=1280,fps=15,video=False,times=None,audio=None,renderer_factory=None):
-    verify_scene(scene);require(width>0 and width%32==0,'Width must be positive and divisible by 32')
+def render(scene,out,width=1280,fps=15,video=False,times=None,audio=None,renderer_factory=None,scene_verifier=None,frame_validator=None):
+    (scene_verifier or verify_scene)(scene);require(width>0 and width%32==0,'Width must be positive and divisible by 32')
     if audio:
         require(scene['caption_coverage']['status']=='PASS','Audio requires a full narration transcript and complete subtitles')
         require(scene.get('audio_binding') is not None,'Audio must be explicitly bound to this narration and timing version; use bind-audio')
@@ -172,7 +172,7 @@ def render(scene,out,width=1280,fps=15,video=False,times=None,audio=None,rendere
     if not video:
         times=times if times is not None else [0,scene['duration']/2,max(0,scene['duration']-1/fps)]
         for i,t in enumerate(times):
-            im,receipt=r.render(t);layout.validate_frame_layout(scene,{'width':width,'fps':fps},receipt)
+            im,receipt=r.render(t);(frame_validator or layout.validate_frame_layout)(scene,{'width':width,'fps':fps},receipt)
             im.save(out/f'frame-{i:03d}.png')
         write(out/'receipts.json',r.records);manifest['sampled_frames']=len(times)
     else:
@@ -187,7 +187,7 @@ def render(scene,out,width=1280,fps=15,video=False,times=None,audio=None,rendere
         try:
             with (out/'receipts.jsonl').open('w') as receipts:
                 for i in range(count):
-                    im,receipt=r.render(i/fps,record=False);layout.validate_frame_layout(scene,{'width':width,'fps':fps},receipt)
+                    im,receipt=r.render(i/fps,record=False);(frame_validator or layout.validate_frame_layout)(scene,{'width':width,'fps':fps},receipt)
                     process.stdin.write(im.tobytes());receipts.write(canonical(receipt)+'\n')
             process.stdin.close();require(process.wait()==0,'FFmpeg encoding failed')
         except BaseException:

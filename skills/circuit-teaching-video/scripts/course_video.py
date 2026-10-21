@@ -41,10 +41,16 @@ def validate_plan(plan,source):
  sceneids=[s['id'] for s in plan['scenes']];require(sceneids and len(sceneids)==len(set(sceneids)),'DUPLICATE_SCENE')
  require([n for s in plan['scenes'] for n in s['sentence_ids']]==ids,'SCRIPT_ORDER_OR_COVERAGE: scenes must partition complete master in order')
  require(set(plan['layout']['scenes'])==set(sceneids),'LAYOUT_SCENES: exact scene coverage required')
- visualids=set()
+ import original_slides
+ original=original_slides.is_plan(plan)
+ if source.get('presentation_mode')=='original-slide':require(original,'PRESENTATION_MODE: original-slide source requires original-slide plan')
+ if original:require([s.get('source_page') for s in plan['scenes']]==source['selected_pages'],'SOURCE_PAGE_ORDER: one scene per original page, complete scope')
+ visualids=set();visualpages={}
  for s in plan['scenes']:
   require(s['sentence_ids'] and set(s['source_pages'])<=pages,'SCENE_SOURCE: invalid scope')
   require(all(sentences[n]['scene_id']==s['id'] and set(sentences[n]['source_pages'])<=set(s['source_pages']) for n in s['sentence_ids']),'SCENE_OWNERSHIP: mismatched sentence/source')
+  if original:
+   oi=original_slides.validate_scene_plan(s,plan['layout']['scenes'][s['id']],plan['layout']);visualids.update(s['id']+'.'+x for x in oi+['source_page']);visualpages.update({s['id']+'.'+x:s['source_page'] for x in oi+['source_page']});continue
   objs=s['source_crops']+s['formula_objects'];oi=[x['id'] for x in objs];require(oi and len(oi)==len(set(oi)),'OBJECT_IDS: missing/duplicate')
   visualids.update(s['id']+'.'+x for x in oi)
   cfg=plan['layout']['scenes'][s['id']];require(set(cfg)<= {'objects','labels'},'LAYOUT_OVERRIDE_FORBIDDEN: no formula/text substitutions');require(set(cfg['objects'])==set(oi),'LAYOUT_OBJECTS: exact coverage required')
@@ -60,9 +66,11 @@ def validate_plan(plan,source):
  coverage=plan['coverage'];require(coverage and {c['source_page'] for c in coverage}==pages,'COVERAGE_PAGES: no selected page may disappear')
  covered=set()
  for c in coverage:
-  require(c['source_item'].strip() and c['formal_sentence_ids'],'COVERAGE_ITEM: named item and treatment required')
+  require(c['source_item'].strip() and (c['formal_sentence_ids'] or (original and c['visual_object_ids'])),'COVERAGE_ITEM: named item and treatment required')
   require(set(c['formal_sentence_ids'])<=set(ids) and set(c['visual_object_ids'])<=visualids,'COVERAGE_REFERENCE: invalid source treatment')
-  require(all(c['source_page'] in sentences[n]['source_pages'] for n in c['formal_sentence_ids']),'COVERAGE_SOURCE: unrelated sentence anchors');covered.update(c['formal_sentence_ids'])
+  require(all(c['source_page'] in sentences[n]['source_pages'] for n in c['formal_sentence_ids']),'COVERAGE_SOURCE: unrelated sentence anchors')
+  if original:require(all(visualpages[v]==c['source_page'] for v in c['visual_object_ids']),'COVERAGE_SOURCE: unrelated visual page')
+  covered.update(c['formal_sentence_ids'])
  require(covered==set(ids),'COVERAGE_SENTENCES: every formal sentence needs source treatment')
  require(set(plan.get('pronunciation',{}))<=set(ids),'PRONUNCIATION_REFERENCE')
  for issue in plan['unresolved_issues']:
@@ -121,8 +129,8 @@ def dispatch(a,attempt):
    for n in pages:
     page=doc[n-1];im=source/f'page-{n:04d}.png';txt=source/f'page-{n:04d}.txt';page.get_pixmap(matrix=fitz.Matrix(1600/page.rect.width,1600/page.rect.width),alpha=False).save(im);txt.write_text(page.get_text())
     rows.append({'page':n,'image_path':str(im.relative_to(project)),'image_sha256':sha(im),'text_path':str(txt.relative_to(project)),'text_sha256':sha(txt),'width':page.rect.width,'height':page.rect.height})
-  data={'schema_version':'course-project-1','SourcePackage':{'original_path':str(dst.relative_to(project)),'display_name':a.source.name,'sha256':sha(dst),'selected_pages':pages,'pages':rows,'page_image_width':1600,'brief':a.brief,'use_scope':'Private teaching preview; no public redistribution authorization inferred'},'LessonPlan':None,'MediaTimeline':None,'BuildManifest':{'created_at':timestamp(),'publication_allowed':False,'scientific_certification':False}}
-  commit(project,data);request=(HERE/'authoring/AUTHOR_PROMPT.md').read_text();(project/'author-request.md').write_text(request+'\n\nActual source package:\n'+json.dumps(data['SourcePackage'],ensure_ascii=False,indent=2)+'\nProject root: '+str(project)+'\n');return {'status_detail':'READY_FOR_FRESH_NATIVE_AUTHOR','project':str(project/'CourseProject.json'),'author_request':str(project/'author-request.md')}
+  data={'schema_version':'course-project-1','SourcePackage':{'original_path':str(dst.relative_to(project)),'display_name':a.source.name,'sha256':sha(dst),'selected_pages':pages,'pages':rows,'page_image_width':1600,'presentation_mode':a.presentation,'brief':a.brief,'use_scope':'Private teaching preview; no public redistribution authorization inferred'},'LessonPlan':None,'MediaTimeline':None,'BuildManifest':{'created_at':timestamp(),'publication_allowed':False,'scientific_certification':False}}
+  commit(project,data);request=(HERE/'authoring/AUTHOR_PROMPT.md').read_text();request+='\n\n'+(HERE/'authoring/ORIGINAL_SLIDE.md').read_text() if a.presentation=='original-slide' else '';(project/'author-request.md').write_text(request+'\n\nActual source package:\n'+json.dumps(data['SourcePackage'],ensure_ascii=False,indent=2)+'\nProject root: '+str(project)+'\n');return {'status_detail':'READY_FOR_FRESH_NATIVE_AUTHOR','project':str(project/'CourseProject.json'),'author_request':str(project/'author-request.md')}
  shutil.copyfile(project/'CourseProject.json',run/'project-input.original.json');attempt.record.update(input_sha256=sha(run/'project-input.original.json'),input_encoding='unified project original JSON bytes');attempt.stage(a.command);data=load_project(project);require(sha(project/'CourseProject.json')==sha(run/'project-input.original.json'),'PROJECT_CHANGED_DURING_READ')
  if a.command=='ingest':
   shutil.copyfile(a.plan,run/'author-response.original.json');attempt.record.update(input_sha256=sha(run/'author-response.original.json'),input_encoding='raw author response JSON bytes');attempt.stage('validate_master');plan=validate_plan(read(a.plan),data['SourcePackage']);oldvoice=digest(voice_document(data['LessonPlan'])) if data['LessonPlan'] else None
@@ -145,25 +153,27 @@ def dispatch(a,attempt):
   r=normalize(project,data,voice,raw,run/'normalized',getattr(a,'allow_whitespace_comma_projection',False));data['MediaTimeline']={'voice_identity':key,'raw_run':str(raw),'receipt_path':str(run/'normalized/voice_receipt.normalized.json'),'projection_allowed':bool(getattr(a,'allow_whitespace_comma_projection',False)),'duration':r['audio']['duration'],'captions':r['caption_windows'],'receipt_sha256':sha(run/'normalized/voice_receipt.normalized.json')};data['BuildManifest'].pop('preview',None);data['BuildManifest'].pop('review',None);commit(project,data);return {'receipt':data['MediaTimeline']['receipt_path'],'duration':r['audio']['duration'],'exact_text_equal':r['text_binding']['exact_text_equal'],'raw_overlap_count':len(r['provider_validation']['raw_overlap_evidence'])}
  require(data['MediaTimeline'] and data['MediaTimeline']['voice_identity']==key,'AUDIO_STALE_OR_MISSING: generate/bind this exact phonetic version')
  if a.command=='render':
-  fonts=setup_fonts(project);check_font_coverage(fonts,data['LessonPlan']);import course_render
-  r=normalize(project,data,voice,Path(data['MediaTimeline']['raw_run']),run/'revalidated_audio',data['MediaTimeline']['projection_allowed']);prof=profile()
+  fonts=setup_fonts(project);check_font_coverage(fonts,data['LessonPlan']);import course_render,original_slides
+  original=original_slides.is_plan(data['LessonPlan']);adapter=original_slides if original else course_render;verify=original_slides.verify_scene if original else course_render.pipeline.verify_scene;renderer=original_slides.OriginalSlideRenderer if original else course_render.VisibleRenderer
+  r=normalize(project,data,voice,Path(data['MediaTimeline']['raw_run']),run/'revalidated_audio',data['MediaTimeline']['projection_allowed']);prof=original_slides.profile() if original else profile()
   from workflow_attempts import environment_fingerprint
   env=environment_fingerprint(prof,course_render.pipeline.runtime_bindings());attempt.environment(env)
   cachekey=digest({'plan':data['LessonPlan'],'source':data['SourcePackage']['sha256'],'voice':key,'events':r['provider_events_sha256'],'mp3':r['audio']['source_mp3_sha256'],'pcm':r['audio']['sha256'],'projection':r['display_policy_sha256'],'implementation':impl,'environment':env['sha256'],'samples_only':a.samples_only})
   cached=project/'cache'/(cachekey+'.json')
   if cached.exists():
-   saved=read(cached);require(all(Path(path).is_file() and sha(path)==h for path,h in saved['files'].items()),'CACHE_TAMPER: render artifact');course_render.pipeline.verify_scene(read(saved['scene_path']));result={**saved,'cache_reused':True}
+   saved=read(cached);require(all(Path(path).is_file() and sha(path)==h for path,h in saved['files'].items()),'CACHE_TAMPER: render artifact');verify(read(saved['scene_path']));result={**saved,'cache_reused':True}
   else:
-   scene,audio=course_render.compile_course(project,data,voice,r,prof,run/'compiled');attempt.stage('render_preview');times=sorted({o['start']+o.get('duration',0)*.5 for o in scene['objects'] if o['kind'] in ('formula','asset')}|{max(0,scene['duration']-1/prof['fps'])})
-   render_started=time.monotonic();result=course_render.pipeline.render(scene,run/'media',width=prof['width'],fps=prof['fps'],video=not a.samples_only,times=times,audio=audio,renderer_factory=course_render.VisibleRenderer)
-   result.update(scene_path=str(run/'compiled/scene.json'),scene_digest=scene['scene_digest'],output_dir=str(run/'media'),render_wall_seconds=time.monotonic()-render_started,static_frame_cache=course_render.VisibleRenderer.last_stats,cache_reused=False)
+   scene,audio=adapter.compile_course(project,data,voice,r,prof,run/'compiled');attempt.stage('render_preview');times=sorted({o['start']+o.get('duration',0)*.5 for o in scene['objects'] if original or o['kind'] in ('formula','asset')}|{max(0,scene['duration']-1/prof['fps'])})
+   render_started=time.monotonic();result=course_render.pipeline.render(scene,run/'media',width=prof['width'],fps=prof['fps'],video=not a.samples_only,times=times,audio=audio,renderer_factory=renderer,scene_verifier=verify,frame_validator=original_slides.validate_frame if original else None)
+   result.update(scene_path=str(run/'compiled/scene.json'),scene_digest=scene['scene_digest'],output_dir=str(run/'media'),render_wall_seconds=time.monotonic()-render_started,static_frame_cache=renderer.last_stats,cache_reused=False)
    if not a.samples_only:result['preview_path']=str(run/'media/preview.mp4')
    result['files']={str(p):sha(p) for folder in (run/'compiled',run/'media') for p in folder.rglob('*') if p.is_file()};atomic_write(cached,result)
   result['node_wall_seconds']=time.monotonic()-started;result['implementation_sha256']=digest(impl)
   data['BuildManifest']['preview']={**result,'plan_sha256':digest(data['LessonPlan']),'voice_identity':key,'cache_key':cachekey,'audiovisual_review':'NOT_PERFORMED','publication_allowed':False};data['BuildManifest'].pop('review',None);commit(project,data);return result
  if a.command=='qa':
-  setup_fonts(project);import course_render
-  preview=data['BuildManifest'].get('preview');require(preview and preview['plan_sha256']==digest(data['LessonPlan']) and preview['voice_identity']==key,'PREVIEW_STALE_OR_MISSING');require(all(sha(path)==h for path,h in preview['files'].items()),'QA_ARTIFACT_CHANGED');require(preview['implementation_sha256']==digest(impl),'QA_IMPLEMENTATION_CHANGED');course_render.pipeline.verify_scene(read(preview['scene_path']))
+  setup_fonts(project);import course_render,original_slides
+  verify=original_slides.verify_scene if original_slides.is_plan(data['LessonPlan']) else course_render.pipeline.verify_scene
+  preview=data['BuildManifest'].get('preview');require(preview and preview['plan_sha256']==digest(data['LessonPlan']) and preview['voice_identity']==key,'PREVIEW_STALE_OR_MISSING');require(all(sha(path)==h for path,h in preview['files'].items()),'QA_ARTIFACT_CHANGED');require(preview['implementation_sha256']==digest(impl),'QA_IMPLEMENTATION_CHANGED');verify(read(preview['scene_path']))
   if a.review:
    shutil.copyfile(a.review,run/'review.original.json');review=read(a.review);require(review['source_sha256']==data['SourcePackage']['sha256'] and review['plan_sha256']==digest(data['LessonPlan']) and review['media_sha256']==preview.get('media_sha256'),'REVIEW_STALE: exact source/plan/media required');require(review['reviewer'] and review['scope'] and isinstance(review['findings'],list),'REVIEW_FIELDS');data['BuildManifest']['review']={'receipt':str(run/'review.original.json'),'sha256':sha(a.review),'has_blockers':any(f['severity']=='blocker' for f in review['findings']),'scientific_certification':False};commit(project,data)
   result={'preview':preview.get('preview_path'),'caption_policy':'full_formal_text_exact','source_coverage':'structurally_complete; fidelity requires actual source comparison','review':data['BuildManifest'].get('review',{'status':'NOT_PERFORMED'}),'publication_allowed':False,'human_listening_required':False,'checklist':['Compare full selected source with master and visuals; retain all mandatory items','Inspect complete media, dense formulas, captions, pointer states, ending','Check real audio/receipt; record actual listening capability honestly','Reauthor only affected source/master/layout data; preserve failed attempts and revalidate downstream identities']};atomic_write(run/'QA.json',result);return result
@@ -173,7 +183,7 @@ def main():
  p=argparse.ArgumentParser(description=__doc__);sub=p.add_subparsers(dest='command',required=True)
  for name in ('prepare','ingest','voice-input','synthesize','bind-voice','render','qa'):
   q=sub.add_parser(name);q.add_argument('--project',type=Path,required=True)
-  if name=='prepare':q.add_argument('--source',type=Path,required=True);q.add_argument('--pages',required=True);q.add_argument('--brief',default='面向电路学习者，用中文忠实讲解完整选定单元；保留所有重要条件、符号、图表与结论，不扩写未给出的推导。')
+  if name=='prepare':q.add_argument('--source',type=Path,required=True);q.add_argument('--pages',required=True);q.add_argument('--presentation',choices=('original-slide','whiteboard'),default='original-slide');q.add_argument('--brief',default='面向电路学习者，用中文忠实讲解完整选定单元；保留所有重要条件、符号、图表与结论，不扩写未给出的推导。')
   elif name=='ingest':q.add_argument('--plan',type=Path,required=True)
   elif name=='synthesize':q.add_argument('--allow-network',action='store_true')
   elif name=='bind-voice':q.add_argument('--raw-run',type=Path,required=True);q.add_argument('--allow-whitespace-comma-projection',action='store_true')
