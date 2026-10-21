@@ -1,0 +1,536 @@
+[
+  {
+    "id": "missing_source_file",
+    "base": "original_rc.json",
+    "expected": "SOURCE_MISSING",
+    "edits": [
+      {
+        "path": [
+          "sources",
+          0,
+          "path"
+        ],
+        "value": "missing-source.txt"
+      }
+    ]
+  },
+  {
+    "id": "missing_source_reference",
+    "base": "original_rc.json",
+    "expected": "SOURCE_MISSING",
+    "edits": [
+      {
+        "path": [
+          "regions",
+          0,
+          "source_ref"
+        ],
+        "value": "not-present"
+      }
+    ]
+  },
+  {
+    "id": "tampered_source_hash",
+    "base": "original_rc.json",
+    "expected": "SOURCE_HASH_MISMATCH",
+    "edits": [
+      {
+        "path": [
+          "sources",
+          0,
+          "sha256"
+        ],
+        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    ]
+  },
+  {
+    "id": "assumption_conflict",
+    "base": "original_rc.json",
+    "expected": "ASSUMPTION_CONFLICT",
+    "edits": [
+      {
+        "path": [
+          "assumptions",
+          0,
+          "value"
+        ],
+        "value": false
+      }
+    ]
+  },
+  {
+    "id": "assumption_missing",
+    "base": "original_rc.json",
+    "expected": "ASSUMPTION_MISSING",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "formulas",
+          0,
+          "requirements"
+        ],
+        "value": {
+          "not_declared": true
+        }
+      }
+    ]
+  },
+  {
+    "id": "dangling_formula",
+    "base": "original_rc.json",
+    "expected": "DANGLING_REFERENCE",
+    "edits": [
+      {
+        "path": [
+          "claims",
+          1,
+          "formula_refs"
+        ],
+        "value": [
+          "impedance",
+          "missing-formula"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "invalid_algebra_same_units",
+    "base": "original_rc.json",
+    "expected": "MATH_IDENTITY_FAILED",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "formulas",
+          0,
+          "expression"
+        ],
+        "value": "2*R/(1+s*R*C)"
+      }
+    ]
+  },
+  {
+    "id": "invalid_units",
+    "base": "original_rc.json",
+    "expected": "UNIT_MISMATCH",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "formulas",
+          0,
+          "expression"
+        ],
+        "value": "R+C"
+      }
+    ]
+  },
+  {
+    "id": "unknown_symbol",
+    "base": "original_rc.json",
+    "expected": "UNKNOWN_SYMBOL",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "formulas",
+          0,
+          "expression"
+        ],
+        "value": "R/(1+s*R*C)+unbound"
+      }
+    ]
+  },
+  {
+    "id": "unsupported_expression",
+    "base": "original_rc.json",
+    "expected": "EXPRESSION",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "formulas",
+          0,
+          "expression"
+        ],
+        "value": "__import__('os').system('true')"
+      }
+    ]
+  },
+  {
+    "id": "missing_script_coverage",
+    "base": "original_rc.json",
+    "expected": "SCRIPT_COVERAGE",
+    "edit_master": true,
+    "edits": [
+      {
+        "path": [
+          "master",
+          "sentences",
+          2
+        ],
+        "remove": true
+      }
+    ]
+  },
+  {
+    "id": "caption_summary_range",
+    "base": "original_rc.json",
+    "expected": "CAPTION_COVERAGE",
+    "edits": [
+      {
+        "path": [
+          "caption_refs",
+          0,
+          "source_range"
+        ],
+        "value": [
+          0,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "id": "caption_free_text_override",
+    "base": "original_rc.json",
+    "expected": "SCHEMA",
+    "edits": [
+      {
+        "path": [
+          "caption_refs",
+          0,
+          "text"
+        ],
+        "value": "A shorter summary."
+      }
+    ]
+  },
+  {
+    "id": "caption_bool_offset",
+    "base": "original_rc.json",
+    "expected": "SCHEMA",
+    "edits": [
+      {
+        "path": [
+          "caption_refs",
+          0,
+          "source_range",
+          0
+        ],
+        "value": false
+      }
+    ]
+  },
+  {
+    "id": "string_negate",
+    "base": "original_rc.json",
+    "expected": "SCHEMA",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "formulas",
+          0,
+          "derivation",
+          "negate"
+        ],
+        "value": "false"
+      }
+    ]
+  },
+  {
+    "id": "string_prerequisite_bool",
+    "base": "original_rc.json",
+    "expected": "SCHEMA",
+    "edits": [
+      {
+        "path": [
+          "knowledge",
+          1,
+          "assumed_prerequisite"
+        ],
+        "value": "false"
+      }
+    ]
+  },
+  {
+    "id": "one_way_claim_link",
+    "base": "original_rc.json",
+    "expected": "REFERENCE_MISMATCH",
+    "edits": [
+      {
+        "path": [
+          "claims",
+          1,
+          "formula_refs"
+        ],
+        "value": []
+      }
+    ]
+  },
+  {
+    "id": "unrelated_knowledge_formula",
+    "base": "original_rc.json",
+    "expected": "REFERENCE_MISMATCH",
+    "edits": [
+      {
+        "path": [
+          "knowledge",
+          1,
+          "formula_refs"
+        ],
+        "value": [
+          "impedance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "knowledge_cycle",
+    "base": "original_rc.json",
+    "expected": "PREREQUISITE_CYCLE",
+    "edits": [
+      {
+        "path": [
+          "knowledge",
+          0,
+          "prerequisite_ids"
+        ],
+        "value": [
+          "limit"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "stale_master",
+    "base": "original_rc.json",
+    "expected": "MASTER_HASH_MISMATCH",
+    "edits": [
+      {
+        "path": [
+          "master",
+          "sentences",
+          0,
+          "text"
+        ],
+        "value": "Unapproved replacement."
+      }
+    ]
+  },
+  {
+    "id": "blocked_claim_in_script",
+    "base": "original_rc.json",
+    "expected": "UNSUPPORTED_CLAIM_IN_SCRIPT",
+    "edits": [
+      {
+        "path": [
+          "claims",
+          1,
+          "coverage_status"
+        ],
+        "value": "blocked"
+      }
+    ]
+  },
+  {
+    "id": "noise_wrong_role",
+    "base": "original_noise_projection.json",
+    "expected": "NOISE_MODEL_SCOPE",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "role"
+        ],
+        "value": "linear_circuit"
+      }
+    ]
+  },
+  {
+    "id": "noise_negative_intrinsic_masked",
+    "base": "original_noise_projection.json",
+    "expected": "NOISE_LAW_DOMAIN",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "formulas",
+          0,
+          "derivation",
+          "intrinsic_psd"
+        ],
+        "value": "-P"
+      },
+      {
+        "path": [
+          "models",
+          0,
+          "formulas",
+          0,
+          "derivation",
+          "additive_psds"
+        ],
+        "value": [
+          "2*P"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "noise_negative_additive",
+    "base": "original_noise_projection.json",
+    "expected": "NOISE_LAW_DOMAIN",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "formulas",
+          0,
+          "derivation",
+          "additive_psds"
+        ],
+        "value": [
+          "-P"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "noise_radians_mislabeled_hz",
+    "base": "original_noise_projection.json",
+    "expected": "NOISE_FREQUENCY_CONVENTION",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "parameters",
+          4,
+          "unit"
+        ],
+        "value": "rad/s"
+      }
+    ]
+  },
+  {
+    "id": "noise_missing_required_fact",
+    "base": "original_noise_projection.json",
+    "expected": "NOISE_MODEL_SCOPE",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "formulas",
+          0,
+          "requirements",
+          "uncorrelated_sources"
+        ],
+        "remove": true
+      }
+    ]
+  },
+  {
+    "id": "noise_colored_intrinsic",
+    "base": "original_noise_projection.json",
+    "expected": "NOISE_LAW_DOMAIN",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "formulas",
+          0,
+          "derivation",
+          "intrinsic_psd"
+        ],
+        "value": "P*(1+(f*R*C)**2)"
+      }
+    ]
+  },
+  {
+    "id": "noise_colored_additive",
+    "base": "original_noise_projection.json",
+    "expected": "NOISE_LAW_DOMAIN",
+    "edits": [
+      {
+        "path": [
+          "models",
+          0,
+          "formulas",
+          0,
+          "derivation",
+          "additive_psds"
+        ],
+        "value": [
+          "P*(f*R*C)**2"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "text_page_count_forged",
+    "base": "original_rc.json",
+    "expected": "SOURCE_PAGE_COUNT",
+    "edits": [
+      {
+        "path": [
+          "sources",
+          0,
+          "page_count"
+        ],
+        "value": 999
+      },
+      {
+        "path": [
+          "regions",
+          0,
+          "page"
+        ],
+        "value": 999
+      }
+    ]
+  },
+  {
+    "id": "knowledge_incomplete_prerequisite",
+    "base": "original_rc.json",
+    "expected": "PREREQUISITE_ORDER",
+    "edits": [
+      {
+        "path": [
+          "knowledge",
+          2,
+          "claim_refs"
+        ],
+        "value": [
+          "c-impedance",
+          "c-dc"
+        ]
+      },
+      {
+        "path": [
+          "knowledge",
+          2,
+          "formula_refs"
+        ],
+        "value": [
+          "impedance",
+          "dc"
+        ]
+      }
+    ]
+  }
+]

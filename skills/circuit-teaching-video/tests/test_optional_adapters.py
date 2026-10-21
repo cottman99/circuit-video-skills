@@ -7,12 +7,13 @@ import voice_adapter as voice
 
 class VoiceInputTests(unittest.TestCase):
     def test_same_lesson_source(self):
-        l={'voice':{'name':'example','rate':'+0%'},'narration':[{'id':'s1','display_text':'R1','spoken_text':'resistor one','semantics_unchanged':True}]}
+        l={'voice':{'name':'example','rate':'+0%'},'narration':[{'id':'s1','text':'resistor one'}]}
         plan=voice.plan_from_lesson(l);voice.validate_spoken_policy(plan)
-        self.assertEqual(plan['beats'][0]['display_text'],l['narration'][0]['display_text'])
-        a=voice.speech_digest(plan);plan['beats'][0]['spoken_text']='resistor two';self.assertNotEqual(a,voice.speech_digest(plan))
-    def test_no_unconfirmed_semantic_rewrite(self):
-        with self.assertRaises(ValueError):voice.validate_spoken_policy({'beats':[{'display_text':'a','spoken_text':'b'}]})
+        self.assertEqual(plan['beats'][0]['spoken_text'],l['narration'][0]['text'])
+        self.assertNotIn('display_text',plan['beats'][0])
+        a=voice.speech_digest(plan);l['narration'][0]['text']='resistor two';self.assertNotEqual(a,voice.speech_digest(voice.plan_from_lesson(l)))
+    def test_no_dual_transcript_in_voice_plan(self):
+        with self.assertRaises(ValueError):voice.plan_from_lesson({'voice':{},'narration':[{'id':'s1','display_text':'summary','spoken_text':'Full narration.'}]})
 
 @unittest.skipUnless(importlib.util.find_spec('fitz'),'Optional PyMuPDF not installed')
 class PdfInputTests(unittest.TestCase):

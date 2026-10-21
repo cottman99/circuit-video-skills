@@ -1,0 +1,269 @@
+{
+  "schema_version": "workflow-node-coverage-1",
+  "scope": "Whole skill roadmap; bounded P0/P1 execution is not overall acceptance",
+  "approval_policy": "Local rendering has no mandatory human approval gate. Publication needs applicable explicit authorization.",
+  "nodes": [
+    {
+      "id": "brief",
+      "purpose": "Specify request and output scope",
+      "input_type": "requested scope and output preferences",
+      "inputs": [
+        "user request",
+        "delivery permissions"
+      ],
+      "outputs": [
+        "output specification",
+        "execution scope"
+      ],
+      "status": "partial",
+      "current_boundary": "Existing route guidance; P0 CLI width/fps. No typed production brief validator."
+    },
+    {
+      "id": "sources",
+      "purpose": "Collect and assess sources",
+      "input_type": "source evidence and rights",
+      "inputs": [
+        "brief",
+        "source materials"
+      ],
+      "outputs": [
+        "source catalog",
+        "coverage ledger",
+        "rights evidence"
+      ],
+      "status": "partial",
+      "current_boundary": "P1 verifies selected source/region bytes and PDF render correspondence with an explicit coverage ledger; source meaning, rights ownership and exhaustive extraction remain unverified."
+    },
+    {
+      "id": "model",
+      "purpose": "Validate structured circuit model",
+      "input_type": "semantic model with stable IDs",
+      "inputs": [
+        "source catalog",
+        "assumptions"
+      ],
+      "outputs": [
+        "components/nets/formulas",
+        "model validation findings"
+      ],
+      "status": "partial",
+      "current_boundary": "P1 checks a bounded declared linear MNA model, units, algebra and selected assumptions; physical adequacy and general device/nonlinear models require review."
+    },
+    {
+      "id": "teaching",
+      "purpose": "Organize teaching sequence",
+      "input_type": "knowledge order and explanatory intent",
+      "inputs": [
+        "model",
+        "coverage ledger",
+        "learner brief"
+      ],
+      "outputs": [
+        "knowledge graph",
+        "ordered teaching units"
+      ],
+      "status": "partial",
+      "current_boundary": "P1 checks prerequisite order and cumulative claim/formula coverage; learner-specific pedagogy and arbitrary planner adapter remain unsupported."
+    },
+    {
+      "id": "formal",
+      "purpose": "Author complete formal manuscript",
+      "input_type": "complete formal source prose",
+      "inputs": [
+        "teaching units",
+        "model"
+      ],
+      "outputs": [
+        "formal narration records",
+        "source/model references"
+      ],
+      "status": "partial",
+      "current_boundary": "P1 validates ordered master identity/coverage and exact P0 formal/caption export; prose truth and original authorship are not inferred."
+    },
+    {
+      "id": "prefreeze_gate",
+      "purpose": "Enforce independent evidence-to-production boundary",
+      "input_type": "circuit-content-package-2 with source-model-script-1 evidence and exact formal/visual links",
+      "inputs": [
+        "current source/region bytes",
+        "declared model and assumptions",
+        "ordered knowledge/master",
+        "full caption references",
+        "semantic and visual expression mapping"
+      ],
+      "outputs": [
+        "hash-bound formal export",
+        "MACHINE_CHECKS_PASSED_REVIEW_REQUIRED or localized FAILED"
+      ],
+      "status": "implemented_p1_bounded",
+      "current_boundary": "One complete model; revalidated per invocation, never scientific/audiovisual/publication approval. Failed gate emits no export or downstream artifacts."
+    },
+    {
+      "id": "visual",
+      "purpose": "Plan visual representation",
+      "input_type": "model-backed visual plan without timing",
+      "inputs": [
+        "model",
+        "teaching units",
+        "output specification"
+      ],
+      "outputs": [
+        "untimed objects",
+        "boards/camera intent",
+        "action dependencies"
+      ],
+      "status": "partial",
+      "current_boundary": "P1 bridge preserves one complete model, directed terminals, IDs and canonical formula expressions. Geometry/prose interpretation and multi-board visual synthesis require review."
+    },
+    {
+      "id": "caption_source",
+      "purpose": "Derive full subtitle source",
+      "input_type": "exact formal-text references",
+      "inputs": [
+        "formal narration records"
+      ],
+      "outputs": [
+        "full-text source spans",
+        "coverage report"
+      ],
+      "status": "implemented_p0",
+      "current_boundary": "One full reference per sentence; arbitrary caption splitting requires more timing evidence."
+    },
+    {
+      "id": "phonetic",
+      "purpose": "Derive dedicated voice input",
+      "input_type": "bounded typed pronunciation transforms",
+      "inputs": [
+        "formal narration records",
+        "voice settings"
+      ],
+      "outputs": [
+        "spoken derivative",
+        "formal\u2194spoken span map"
+      ],
+      "status": "implemented_p0",
+      "current_boundary": "Existing typed transforms; acoustic pronunciation correctness not claimed."
+    },
+    {
+      "id": "audio",
+      "purpose": "Obtain and validate audio evidence",
+      "input_type": "actual bytes and provenance-bound events",
+      "inputs": [
+        "spoken derivative",
+        "voice settings",
+        "authorized provider or fixture"
+      ],
+      "outputs": [
+        "audio",
+        "validated events",
+        "evidence limitations"
+      ],
+      "status": "partial",
+      "current_boundary": "Local synthetic fixture implemented; live provider adapter exists but is not integrated here."
+    },
+    {
+      "id": "temporal",
+      "purpose": "Solve joint presentation timing",
+      "input_type": "evidence-driven full captions and visual windows",
+      "inputs": [
+        "validated events",
+        "full-text source spans",
+        "visual constraints",
+        "font/layout measurements"
+      ],
+      "outputs": [
+        "SAT timeline or UNSAT diagnostics",
+        "final caption layout"
+      ],
+      "status": "implemented_p0",
+      "current_boundary": "Fixed sentence windows and positive reveal/read DAG only; no general timing network or word alignment."
+    },
+    {
+      "id": "freeze",
+      "purpose": "Freeze exact rendering inputs",
+      "input_type": "version-bound scene and assets",
+      "inputs": [
+        "SAT timeline",
+        "semantic model",
+        "visual plan",
+        "audio",
+        "runtime/fonts"
+      ],
+      "outputs": [
+        "derived lesson",
+        "frozen scene",
+        "dependency identities"
+      ],
+      "status": "implemented_p0",
+      "current_boundary": "Version-2 binds gate/code/input/output identities into derived lesson, frozen scene and preview. Legacy routes are explicitly ungated."
+    },
+    {
+      "id": "render",
+      "purpose": "Render and verify technical media",
+      "input_type": "reproducible media artifacts",
+      "inputs": [
+        "frozen scene",
+        "exact audio",
+        "output profile"
+      ],
+      "outputs": [
+        "preview/media",
+        "per-frame receipts",
+        "decode verification"
+      ],
+      "status": "implemented_p0",
+      "current_boundary": "Existing renderer, full decode/frame count, and explicit encoder/runtime/font/profile fingerprints. No cross-environment byte-equality, visual/listening/scientific certification claim."
+    },
+    {
+      "id": "review",
+      "purpose": "Review exact artifact version",
+      "input_type": "independent scientific and audiovisual findings",
+      "inputs": [
+        "frozen scene",
+        "media hash",
+        "technical reports"
+      ],
+      "outputs": [
+        "artifact-bound findings",
+        "approval or change request"
+      ],
+      "status": "not_automated",
+      "current_boundary": "Runner never inherits approval. Root coordinates requested independent review; machine review contract remains future."
+    },
+    {
+      "id": "deliver",
+      "purpose": "Deliver only authorized version",
+      "input_type": "approved destination and exact content",
+      "inputs": [
+        "reviewed artifact",
+        "explicit destination/version authorization"
+      ],
+      "outputs": [
+        "delivery receipt or blocker"
+      ],
+      "status": "not_implemented",
+      "current_boundary": "No publication/upload in runner; external execution must separately verify authorization."
+    },
+    {
+      "id": "rework",
+      "purpose": "Rebuild changed dependencies",
+      "input_type": "new revision from attributed findings",
+      "inputs": [
+        "source changes or review findings",
+        "node dependency identities"
+      ],
+      "outputs": [
+        "invalidation manifest",
+        "rebuilt affected artifacts"
+      ],
+      "status": "partial",
+      "current_boundary": "P0.1 lifecycle and P1 source/model/master bindings drive invalidation; gate reruns before any cache reuse. Whole-workflow review routing remains future."
+    }
+  ],
+  "next_acceptance_decisions": [
+    "Independent reviewer selects next whole-skill stage and acceptance tests.",
+    "Extend typed brief/research/pedagogical planning beyond the bounded one-model P1 integration before claiming arbitrary planning-to-production support.",
+    "Integrate real provider evidence without silently promoting sentence events to word alignment.",
+    "Bind review findings and authorized delivery to exact artifacts without blocking ordinary local renders."
+  ]
+}

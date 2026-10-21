@@ -13,6 +13,8 @@ import logical_scene as native
 import type_styles as typography
 import layout_constraints as layout
 from world_canvas import CanvasRenderer,ADAPTER
+from caption_contract import resolve_captions,narration_identity,timing_identity,validate_audio_binding,identity
+from speech_text import speech_identity
 
 def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def canonical(data):return json.dumps(data,sort_keys=True,ensure_ascii=False,separators=(',',':'),allow_nan=False)
@@ -24,14 +26,39 @@ def require(ok,message):
 def finite(x):return isinstance(x,(int,float)) and not isinstance(x,bool) and math.isfinite(x)
 def rectangle(box):return isinstance(box,list) and len(box)==4 and all(finite(x) for x in box) and min(box[2:])>0
 
+def bind_audio(lesson,audio):
+    """Explicit identity binding, not an acoustic/transcript-match certification."""
+    result=copy.deepcopy(lesson);narration=result.get('narration',[])
+    cues,_=resolve_captions(narration,result.get('captions',[]),result['duration'])
+    require(narration,'Audio binding requires the complete narration transcript')
+    audio=Path(audio);require(audio.is_file(),'Missing user audio')
+    result['audio_binding']={'schema_version':'narration-audio-binding-1','audio_sha256':sha(audio),
+      'narration_sha256':narration_identity(narration),'timing_sha256':timing_identity(narration,cues),
+      'voice_sha256':identity(result.get('voice')),'speech_sha256':speech_identity(narration,result.get('voice')),
+      'evidence':'explicitly_selected_pair_not_acoustically_verified'}
+    return result
+
 def runtime_bindings():
     result={p.relative_to(ROOT).as_posix():sha(p) for folder in ['rendering','style'] for p in sorted((ROOT/folder).rglob('*')) if p.is_file() and p.suffix in ['.py','.json']}
     result['scripts/pipeline.py']=sha(__file__)
+    workflow=ROOT/'scripts/run_workflow.py'
+    if workflow.exists():result['scripts/run_workflow.py']=sha(workflow)
+    attempts=ROOT/'scripts/workflow_attempts.py'
+    if attempts.exists():result['scripts/workflow_attempts.py']=sha(attempts)
+    # Freeze the optional evidence gate implementation/schema with the runtime.
+    for relative in ('scripts/source_model_gate.py','scripts/prefreeze_gate.py','schemas/source-model-script.schema.json'):
+        if (ROOT/relative).is_file():result[relative]=sha(ROOT/relative)
+    result['scripts/spoken_notation.py']=sha(ROOT/'scripts/spoken_notation.py')
     return {'files':result,'fonts':{str(w):sha(p) for w,p in typography.FONTS.items()}}
 
 def compile_data(lesson,base=None):
     L=copy.deepcopy(lesson);require(L.get('schema_version')=='circuit-lesson-1','Unsupported authored schema')
     D=L['duration'];require(finite(D) and D>0,'Invalid duration')
+    # Subtitle text is derived only from the full authoritative formal transcript.
+    # Board summaries/labels are world objects, never an alternate subtitle source.
+    speech_hash=speech_identity(L.get('narration',[]),L.get('voice'))
+    caption_segments,caption_coverage=resolve_captions(L.get('narration',[]),L.get('captions',[]),D)
+    if L.get('audio_binding') is not None:validate_audio_binding(L['audio_binding'],L.get('narration',[]),caption_segments,L.get('voice'))
     require(set(L.get('required_capabilities',[]))<=set(ADAPTER['capabilities']),'Unsupported renderer capability')
     catalog=L.get('source_catalog')
     if catalog:
@@ -66,7 +93,7 @@ def compile_data(lesson,base=None):
     contract['subtitles']['font_family']=typography.FAMILY
     layout.validate_contract(contract,config)
     draw=ImageDraw.Draw(Image.new('RGB',(1,1)))
-    alltext=''.join(o.get('text','') for o in objects)+''.join(c['display_text'] for c in L.get('captions',[]))
+    alltext=''.join(o.get('text','') for o in objects)+''.join(c['text'] for c in caption_segments)
     typography.validate_glyphs(alltext)
     for o in objects:
         require(o['kind'] in ['formula','asset','text','rect','line'],'Public adapter does not support this object kind')
@@ -96,11 +123,7 @@ def compile_data(lesson,base=None):
             rw=o['read_window'];require(o['start']+o['duration']<=rw[0]<rw[1]<=D,'Read window precedes complete formula')
         if o['kind']=='line':require(len(o['points'])>=2 and all(len(p)==2 and all(finite(v) for v in p) for p in o['points']),'Invalid polyline')
     resolved=layout.apply_board_layout(objects,boards,contract,native);layout.validate_objects(objects,resolved)
-    captions=[];previous=0
-    for c in L.get('captions',[]):
-        require(0<=c['start']<c['end']<=D and c['start']>=previous,'Overlapping or invalid captions');previous=c['end']
-        captions.append({**c,'audio_end':c['end']})
-    captions=layout.compile_captions(captions,contract,native)
+    captions=layout.compile_captions([{**c,'audio_end':c['end']} for c in caption_segments],contract,native)
     byid={o['id']:o for o in objects};actions=[];previous=0
     for a in L.get('teacher_actions',[]):
         require(a['kind'] in ['frame','arrow'],'Unsupported authored attention kind')
@@ -116,10 +139,15 @@ def compile_data(lesson,base=None):
     require(previous==D,'Camera must cover complete timeline')
     scene={'schema_version':'circuit-compiled-scene-1','adapter':'circuit-world-v1','duration':D,'objects':objects,'camera_track':camera,
       'layout_contract':contract,'render_config':config,'typography_contract':copy.deepcopy(typography.DEFAULT_CONTRACT),
-      'resolved_layout':resolved,'captions':captions,'teacher_actions':actions,'knowledge_graph':L['knowledge_graph'],
+      'resolved_layout':resolved,'captions':captions,'narration':L.get('narration',[]),'caption_coverage':caption_coverage,'speech_sha256':speech_hash,
+      'teacher_actions':actions,'knowledge_graph':L['knowledge_graph'],
       'sources':L['sources'],'source_digest':digest(lesson),'runtime':runtime_bindings(),
-      'timing_evidence':'authored_seconds_not_measured_speech','review_status':'not_audiovisually_reviewed'}
+      'timing_evidence':'authored_seconds_not_measured_speech','review_status':'not_audiovisually_reviewed',
+      'source_model_gate':{'status':'UNGATED_LEGACY_PREVIEW','scientific_approval':False,
+                           'audiovisual_approval':False,'publication_allowed':False}}
     if catalog:scene.update(source_catalog=catalog,asset_base=str(Path(base).resolve()))
+    if L.get('audio_binding') is not None:scene['audio_binding']=L['audio_binding']
+    if L.get('voice') is not None:scene['voice']=L['voice']
     layout.validate_scene_layout(scene);scene['scene_digest']=digest(scene);return scene
 
 def verify_scene(scene):
@@ -128,12 +156,19 @@ def verify_scene(scene):
     require(scene['runtime']==runtime_bindings(),'Runtime or fonts changed; recompile authored input')
     layout.validate_scene_layout(scene)
 
-def render(scene,out,width=1280,fps=15,video=False,times=None,audio=None):
+def render(scene,out,width=1280,fps=15,video=False,times=None,audio=None,renderer_factory=None):
     verify_scene(scene);require(width>0 and width%32==0,'Width must be positive and divisible by 32')
+    if audio:
+        require(scene['caption_coverage']['status']=='PASS','Audio requires a full narration transcript and complete subtitles')
+        require(scene.get('audio_binding') is not None,'Audio must be explicitly bound to this narration and timing version; use bind-audio')
+        require(Path(audio).is_file() and sha(audio)==scene['audio_binding']['audio_sha256'],'Audio differs from the bound narration/timing version')
     require(finite(fps) and fps>0,'Invalid fps');out=Path(out);out.mkdir(parents=True,exist_ok=True)
-    r=CanvasRenderer(scene,width=width,fps=fps);count=math.ceil(scene['duration']*fps)
+    r=(renderer_factory or CanvasRenderer)(scene,width=width,fps=fps);count=math.ceil(scene['duration']*fps)
     manifest={'status':'technical_preview_unreviewed','audio':'silent' if audio is None else 'user_supplied_not_alignment_certified',
-      'scene_digest':scene['scene_digest'],'width':width,'height':r.config.height,'fps':fps,'frames':count,'checks':[]}
+      'scene_digest':scene['scene_digest'],'width':width,'height':r.config.height,'fps':fps,'frames':count,'checks':[],
+      'caption_coverage':scene['caption_coverage'],'audio_binding':scene.get('audio_binding'),
+      'source_model_gate':{'status':'NOT_REVALIDATED_LOW_LEVEL_RENDER','scientific_approval':False,
+                           'audiovisual_approval':False,'publication_allowed':False}}
     if not video:
         times=times if times is not None else [0,scene['duration']/2,max(0,scene['duration']-1/fps)]
         for i,t in enumerate(times):
@@ -166,10 +201,15 @@ def render(scene,out,width=1280,fps=15,video=False,times=None,audio=None):
 def main():
     ap=argparse.ArgumentParser(description=__doc__);sub=ap.add_subparsers(dest='command',required=True)
     c=sub.add_parser('compile');c.add_argument('lesson',type=Path);c.add_argument('--output',required=True,type=Path)
+    b=sub.add_parser('bind-audio',help='Bind an explicitly selected recording/transcript pair; does not prove acoustic alignment')
+    b.add_argument('lesson',type=Path);b.add_argument('--audio',required=True,type=Path);b.add_argument('--output',required=True,type=Path)
     r=sub.add_parser('render');r.add_argument('scene',type=Path);r.add_argument('--output',required=True,type=Path);r.add_argument('--width',default=1280,type=int);r.add_argument('--fps',default=15,type=int);r.add_argument('--video',action='store_true');r.add_argument('--times');r.add_argument('--audio',type=Path)
     a=ap.parse_args()
     try:
-        if a.command=='compile':
+        if a.command=='bind-audio':
+            require(a.lesson.resolve()!=a.output.resolve(),'Write a new authoritative lesson version, not over the source')
+            result=bind_audio(json.loads(a.lesson.read_text()),a.audio);write(a.output,result);print(json.dumps({'status':'audio_identity_bound_not_alignment_certified'}))
+        elif a.command=='compile':
             require(a.lesson.resolve()!=a.output.resolve(),'Cannot overwrite authored source')
             scene=compile_data(json.loads(a.lesson.read_text()),a.lesson.parent);write(a.output,scene);print(json.dumps({'status':'compiled','objects':len(scene['objects']),'source_digest':scene['source_digest']}))
         else:

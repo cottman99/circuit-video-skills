@@ -17,7 +17,7 @@ def forbid_network(*args,**kwargs):raise AssertionError('Offline tests must not 
 class VoiceCacheTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.base=Path(self.tmp.name);self.audio=self.base/'audio';self.audio.mkdir()
-        self.plan={'voice':{'name':'offline-test','rate':'+0%'},'beats':[{'id':'s1','sentence_id':'s1','display_text':'Test.','spoken_text':'Test.','semantics_unchanged':True}]}
+        self.plan=voice.plan_from_lesson({'voice':{'name':'offline-test','rate':'+0%'},'narration':[{'id':'s1','text':'Test.'}]})
         self.stub=patch.dict(sys.modules,{'edge_tts':types.SimpleNamespace(Communicate=forbid_network)});self.stub.start()
     def tearDown(self):self.stub.stop();self.tmp.cleanup()
     def cache(self,duration=1.25,event=None):

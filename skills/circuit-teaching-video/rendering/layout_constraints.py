@@ -5,6 +5,7 @@ consumes frozen geometry. Screen chrome never follows the world-camera pan.
 import math,re
 from PIL import Image,ImageDraw
 import type_styles as typography
+from caption_contract import validate_compiled_captions
 
 SCHEMA='whiteboard-layout-1'
 TOKENS=('g_mb','g_m','r_o','R_D','C_in','C_out')
@@ -118,7 +119,7 @@ def compile_captions(segments,contract,native):
     style=contract['subtitles'];zone=contract['subtitle_zone'];size=style['font_size'];pad=style['horizontal_padding'];maxw=zone[2]-2*pad
     out=[]
     for seg in segments:
-        rows=wrap_text(seg['display_text'],native.font(size),maxw)
+        rows=wrap_text(seg['text'],native.font(size),maxw)
         # Text wrapping is conservative for native math runs, then verify exact mixed widths.
         require(len(rows)<=style['max_lines'],'subtitle exceeds maximum lines '+seg['id'])
         height=len(rows)*style['line_height'];require(height<=zone[3],'subtitle height overflow '+seg['id'])
@@ -135,7 +136,8 @@ def compile_captions(segments,contract,native):
                 cursor+=unit['width']
             bounds=union([background]+ink);require(contains(zone,bounds),'subtitle glyph ink outside internal strip '+seg['id'])
             placed.append({'text':row,'units':units,'xy':[x,y],'background_bounds':background,'ink_bounds':union(ink),'bounds':bounds});y+=style['line_height']
-        out.append({'id':seg['id'],'text':seg['display_text'],'start':seg['start'],'end':seg['audio_end'],'coordinate_space':'screen','safe_band':zone,'font_size':size,'rows':placed})
+        out.append({'id':seg['id'],'text':seg['text'],'start':seg['start'],'end':seg['audio_end'],'coordinate_space':'screen','safe_band':zone,'font_size':size,'rows':placed,
+                    'narration_id':seg['narration_id'],'source_range':seg['source_range'],'text_sha256':seg['text_sha256']})
     return out
 
 def camera_at(scene,t):
@@ -152,6 +154,7 @@ def screen_geometry(scene,config,t):
     return view,transform,scale,u
 
 def validate_scene_layout(scene):
+    validate_compiled_captions(scene)
     typography.validate_objects(scene['objects'],scene['typography_contract'])
     validate_contract(scene['layout_contract'],scene['render_config']);validate_objects(scene['objects'],scene['resolved_layout'])
     c=scene['layout_contract'];zone=c['subtitle_zone']
@@ -181,6 +184,9 @@ def validate_frame_layout(scene,config,receipt):
     cue=next((c for c in scene['captions'] if c['start']<=receipt['time']<c['end']),None)
     expected=[[v*u for v in row['bounds']] for row in cue['rows']] if cue else []
     require(receipt.get('caption_segment')==(cue['id'] if cue else None),'incorrect caption cue')
+    require(receipt.get('caption_text')==(cue['text'] if cue else None),'rendered caption text differs from full formal-text cue')
+    require(receipt.get('caption_source_range')==(cue['source_range'] if cue else None),'rendered caption source range differs')
+    require(receipt.get('caption_narration_id')==(cue['narration_id'] if cue else None),'rendered caption narration ID differs')
     require(len(receipt.get('caption_boxes',[]))==len(expected),'caption row count differs')
     for actual,wanted in zip(receipt['caption_boxes'],expected):
         require(close(actual,wanted),'caption bounds differ from frozen layout');require(contains(shell,actual) and contains(zone,actual),'caption outside whiteboard')

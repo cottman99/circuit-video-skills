@@ -1,0 +1,4 @@
+# Exact versions exercised for the bounded optional P1 gate.
+# PDF source validation additionally requires Poppler pdfinfo/pdftoppm.
+sympy==1.14.0
+jsonschema==4.26.0

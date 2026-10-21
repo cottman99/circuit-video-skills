@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Offline semantic timeline audit. Declared geometry is not rendered-media certification."""
-import argparse, hashlib, json, math
+import argparse, hashlib, json, math, sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'rendering'))
+from caption_contract import resolve_captions
 
 
 def audit(scene, root='.'):
@@ -98,16 +100,26 @@ def audit(scene, root='.'):
         a,b=interval(n);o=objects.get(n['target_id'])
         ready=o.get('visible_from',0)+(o.get('draw_duration',0) if n.get('requires_complete',True) else 0) if o else math.inf
         add('narration_reveal','pass' if ready<=a else 'fail',n['target_id']+' ready='+str(ready)+' mention='+str(a))
-    cues=scene.get('subtitles',[])
+    cues=scene.get('subtitles',scene.get('captions',[]))
+    # Time-window coverage is not spoken-text coverage. Legacy declarations
+    # without canonical narration/reference slices cannot earn a textual PASS.
+    if 'narration' not in scene:
+        add('subtitle_text_coverage','unknown','Missing canonical narration and source-reference captions')
+    else:
+        try:
+            _,coverage=resolve_captions(scene['narration'],cues,duration,compiled=bool(cues and 'text' in cues[0]))
+            add('subtitle_text_coverage','pass' if scene['narration'] else 'unknown',coverage,'exact_ordered_source_slices')
+        except (KeyError,TypeError,ValueError) as error:
+            add('subtitle_text_coverage','fail',str(error))
     if not cues:add('subtitle_coverage','unknown','No subtitle cues')
     else:
         ordered=sorted(cues,key=lambda x:x['start']);last=0
         for c in ordered:
             a,b=interval(c)
             add('subtitle_overlap','fail' if a<last-1e-6 else 'pass',str([a,b]));last=max(last,b)
-            lines=c['text'].splitlines()
+            lines=c.get('text','').splitlines()
             orphan=any(len(''.join(ch for ch in line if ch.isalnum()))<=1 for line in lines)
-            add('subtitle_orphan','review' if orphan else 'pass',c['text'],'heuristic')
+            add('subtitle_orphan','review' if orphan else 'pass',c.get('text','Unmaterialized source-reference caption'),'heuristic')
         windows=scene.get('speech_windows')
         if windows is None:add('subtitle_coverage','unknown','No measured speech windows; silence is not assumed speech')
         for s in windows or []:

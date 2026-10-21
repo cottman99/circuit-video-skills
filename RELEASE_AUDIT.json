@@ -1,8 +1,8 @@
 {
   "status": "PASS",
-  "file_count": 55,
-  "bytes": 280260,
-  "local_links_checked": 28,
+  "file_count": 96,
+  "bytes": 707990,
+  "local_links_checked": 42,
   "findings": [],
   "scope": "Static common-secret/private-path/media exclusion, local links and Python syntax; not exhaustive security or copyright certification"
 }

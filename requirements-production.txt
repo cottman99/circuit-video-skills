@@ -1,0 +1,5 @@
+# Full PDF-to-video route. The silent renderer alone uses requirements.txt.
+-r requirements.txt
+# External AGPL/commercial dependency; review THIRD_PARTY_NOTICES.md.
+PyMuPDF>=1.26,<2
+# Live Edge speech is optional: install edge-tts separately only when needed.

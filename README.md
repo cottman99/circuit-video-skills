@@ -1,65 +1,76 @@
-# Circuit Video Skills · 电路教学视频制作 Skill
+# Circuit Video Skills · 电路讲义转视频
 
-把电路知识、模型假设、推导、画面、讲述和验证串成一条可追溯的生产链，而不是把讲义逐页变成幻灯片。
+默认是一条五节点制作流程：原讲义与完整选定范围 → 单一正式稿和场景计划 → 专用发音衍生与完整字幕 → 真实音频证据驱动的时间线和 MP4 → 局部复核与返工。内容忠实讲义，制作流程尽量简单；不把所有模型验证工具叠成必经关卡。
 
-此仓库是通用 Skill 0.15.0 与后续生产改进的公开、去素材化版本。核心能力包括：知识图与局部推理白板、持久世界画布、原生像素密度公式、同源几何教鞭、语义颜色、真实字重、内部字幕安全区，以及前景注意标记与浅色底衬分层。
+当前为有界公开发布候选。已完成的私有制作案例不随代码发布，也不代表任意讲义都能无人工判断地自动转换。正式稿编写和独立源稿/视听比较由实际 AI 助手工作完成，不是预置答案或一个神奇的自动解析命令。
 
-![原创分压演示，白板与公式分层](docs/example.png)
+## 安装
 
-## 仓库内容
-
-- `skills/circuit-teaching-video/SKILL.md`：供 AI 助手加载的入口与工作流。
-- `skills/circuit-teaching-video/rendering/`：从实际生产代码提取并通用化的画布、数学、教鞭、布局与字体实现。
-- `skills/circuit-teaching-video/scripts/pipeline.py`：单一 lesson JSON → 冻结场景 → 图片/视频 → 实际逐帧记录与技术检查。
-- `skills/circuit-teaching-video/scripts/voice_adapter.py`：可选 TTS 适配器，显式调用才向服务发送讲述文本。
-- `skills/circuit-teaching-video/rendering/source_catalog_assets.py`：可选、源文件哈希绑定的 PDF 局部裁切。
-- `skills/circuit-teaching-video/references/`：内容研究、模型、字幕、生产与质量检查约定。
-- `skills/circuit-teaching-video/examples/resistor-divider/lesson.json`：原创小型电阻分压演示，不是课程素材。
-
-不包含任何课程讲义、第三方教学图、完整讲述音频、成片、账户信息或字体包。
-
-## 快速运行
-
-要求 Python 3.11+。视频编码还需自行安装 FFmpeg / ffprobe。先使用虚拟环境，再安装依赖：
+已测试 Python 3.12。自行安装 FFmpeg/ffprobe 和中文字体；Linux 可用 Noto CJK Regular/Bold。默认寻找已安装 Noto Sans CJK SC，也可设置 CIRCUIT_FONT_REGULAR、CIRCUIT_FONT_HEADING 指向自己的字体。没有捆绑字体。
 
 ```sh
 python -m venv .venv
-# Linux/macOS: source .venv/bin/activate
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python -B -m unittest discover -s skills/circuit-teaching-video/tests -v
-python skills/circuit-teaching-video/scripts/pipeline.py compile skills/circuit-teaching-video/examples/resistor-divider/lesson.json --output output/scene.json
-python skills/circuit-teaching-video/scripts/pipeline.py render output/scene.json --output output/stills --width 1280 --times 2.4,6.0,7.8
-python skills/circuit-teaching-video/scripts/pipeline.py render output/scene.json --output output/video --width 640 --fps 15 --video
+# 激活虚拟环境后，先阅读 THIRD_PARTY_NOTICES.md 中 PyMuPDF 的许可边界。
+python -m pip install -r requirements-production.txt
+# 仅在需要且已获授权使用 Edge 服务时安装：
+python -m pip install 'edge-tts==7.3.1'
 ```
 
-最后一条生成 8 秒无声演示，120 帧。加 `--audio path/to/audio.wav` 可混入长度匹配的自有录音；这不会自动证明字幕对齐。`--width 3840 --fps 30` 可生成原生 4K，但应先审阅小样与原生清晰度样帧。
+只运行本地无声渲染器可改装 requirements.txt，不需要 PDF 或 TTS 依赖。可选模型测试另外安装 requirements-p1.txt；它不是普通讲义制作的前置门。具体已测试版本见 skills/circuit-teaching-video/config/requirements-tested.txt，不是跨平台锁文件。
 
-作为 Skill 使用时，将整个 `skills/circuit-teaching-video` 文件夹放入支持 `SKILL.md` 的助手的技能目录，或明确让助手读取该文件。不自动安装、不改动全局配置。
+## 默认五节点命令
 
-## 中文字体与可选适配器
-
-默认使用 Matplotlib 自带 DejaVu Sans，适合英文演示；缺字会报错，不会悄悄替换。中文生产请从 [Noto CJK 官方仓库](https://github.com/notofonts/noto-cjk/tree/main/Sans) 自行取得同家族的 Regular 与 Medium 字体，设置：
+将整个 skills/circuit-teaching-video 作为 Skill 加载，读取 [SKILL.md](skills/circuit-teaching-video/SKILL.md) 与 [输入输出合同](skills/circuit-teaching-video/authoring/CONTRACT.md)。PDF、PAGES 和 PROJECT 由本次任务提供，PAGES 是完整选定单元的物理页号。
 
 ```sh
-export CIRCUIT_FONT_REGULAR=/path/to/NotoSansCJKsc-Regular.otf
-export CIRCUIT_FONT_HEADING=/path/to/NotoSansCJKsc-Medium.otf
+SKILL=skills/circuit-teaching-video
+python "$SKILL/scripts/course_video.py" prepare --source "$PDF" --pages "$PAGES" --project "$PROJECT"
+# 新的 AI 编写步骤读取 author-request.md、全部选定原页图像和文字，
+# 生成唯一 AUTHOR_RESPONSE；另一次实际源稿比较检查完整覆盖。
+python "$SKILL/scripts/course_video.py" ingest --project "$PROJECT" --plan "$AUTHOR_RESPONSE"
+python "$SKILL/scripts/course_video.py" voice-input --project "$PROJECT"
+# 只有适用授权允许发送旁白时才执行；开关本身不构成许可：
+python "$SKILL/scripts/course_video.py" synthesize --project "$PROJECT" --allow-network
+python "$SKILL/scripts/course_video.py" render --project "$PROJECT"
+python "$SKILL/scripts/course_video.py" qa --project "$PROJECT" --review "$AV_REVIEW"
 ```
 
-Windows PowerShell 使用 `$env:CIRCUIT_FONT_REGULAR="..."` 与 `$env:CIRCUIT_FONT_HEADING="..."`。字体变更后必须重新编译场景。没有复制字体文件；上游许可证不受本仓库许可证替代。
+若服务已返回完整原始音频，但句边界重叠或狭窄标点差异使旧适配器拒绝，保留首次失败，离线调用 bind-voice --raw-run "$RAW_RUN"。只有明确接受该投影时才加 --allow-whitespace-comma-projection，不要为了修元数据再请求配音。改变词语、乱序、缺句或多句事件不会被悄悄修好；大段请求的服务分块可能仍触发明确失败，不能靠删除教学内容规避。
 
-PDF 与 TTS 按需安装 `requirements-optional.txt`，先阅读 [适配器边界](skills/circuit-teaching-video/references/adapters.md) 和 [依赖许可说明](THIRD_PARTY_NOTICES.md)。基础示例不需要网络、TTS 或 PDF 依赖。
+CourseProject 仅有 SourcePackage、LessonPlan、MediaTimeline、BuildManifest 四部分。字幕始终来自完整正式稿；发音变化不改变字幕正文。布局返工复用同一已验证音频，声音/正式稿变化使旧音频或时间线失效；所有旧响应、失败和版本保留。最新尝试与历史成功分开，技术成功不等于视听、科学或发布批准。没有强制用户中途听审。
+
+## 可选强解析器入口
+
+默认无需另装解析器即可保留原页。已手动配置并确认适用许可时，可在 prepare 之后、正式稿编写之前使用外部 MinerU 4.0.12 basic 作为主要结构提取来源；不要把多个解析器串行跑一遍。模型须事先全部缓存，适配器在导入 ORT 前禁用遥测并设离线模式，缺模型会停止，不会自动下载。不同代码/模型各有条款，本仓库 MIT 不能替代它们。
+
+```sh
+"$MINERU_PYTHON" "$SKILL/scripts/mineru_source.py" \
+  --project "$PROJECT/CourseProject.json" --output "$PROJECT/parser-import-001" \
+  --run-local --mineru-home "$MINERU_HOME" --model-manifest "$MODEL_MANIFEST"
+```
+
+把该次 SourcePackage.import.json 的明确路径和哈希交给编写步骤，连同全部原页图像使用，保留输入/输出证据。它是提取旁件，不是第二份正式稿，也不改写 CourseProject；原相对路径由 source_base 明确定位。仅在出现具体缺陷的块回看原图/裁片，OCR 不能当网表或科学结论。参见 [可选解析器接口及限制](skills/circuit-teaching-video/references/external-parser.md)。
 
 ## 已实现与边界
 
-- 已执行：原创示例编译、静帧、原生 4K 样帧、8 秒完整编码、精确解码帧数、逐帧几何、负向回归与底衬像素保护测试。
-- 主渲染器支持文字、公式、线、框、经验证的白底 PDF 裁切、世界镜头、累积对象及屏幕字幕；不是自动电路拓扑求解器或仿真器。
-- 可选语音适配器保存实际句边界与缓存证据。公开版没有执行在线合成，也没有自动把任意语音事件转成最优教学动作。实际声音、逐词对齐及完整视听审阅必须分别确认。
-- 源内容/模型正确性、教学效果、所有输入字体/公式的支持，均不能由技术 PASS 推断。
-- 新增来源时自行确认使用与再分发权。公开此 Skill 不会授予任何第三方课程、图片、音频或字体的权利。
+- 原始 PDF、完整选页、图像/文字、完整稿件和画面引用保持关联；结构检查不代替实际内容比较。
+- 真实句起点与完整 PCM 时长生成独占显示窗，保留原始提供方区间；不是逐词、音素或精确句末对齐。
+- 画面、字体、公式和完整字幕按实际几何检查；不足时明确失败，不摘要化字幕或拉伸语音。
+- 范围是可读 PDF、经检查的白底电路/数学/图表裁片、中文旁白和句级提示。不是所有扫描件、照片、任意拓扑、自动仿真或科学认证。
+- 原始压缩栅格图的近白像素可能影响底衬效果，须看实际编码画面并局部调整提示。不能因声明 white_matte_safe 就假定一切栅格图都安全。
+- 当前基础文字提取仍有复杂布局局限；更强解析器只能作为独立外部适配器，不能把 OCR 当网表。仓库提供可选外部 MinerU 适配脚本，但不包含或自动安装 MinerU 代码/模型。
+- 任何新源素材、远程配音、交付与公开发布均须满足各自权限和第三方条款。仓库无课程 PDF、第三方教学图、音频、视频、字体、模型权重或账号信息。
 
-更多信息：[生产工作流](skills/circuit-teaching-video/references/production-workflow.md) · [公共版范围与来源](PROVENANCE.md) · [安全说明](SECURITY.md)。
+## 本地回归与底层工具
+
+```sh
+python -m pip install -r requirements-p1.txt
+python -B -m unittest discover -s skills/circuit-teaching-video/tests -v
+python scripts/release_audit.py
+```
+
+测试中的音轨为明确标记的合成开发夹具，测试不会发起真实 TTS。较低层的 pipeline.py、原创分压例、可选来源/模型门和旧规划工具保留兼容，但不构成默认五节点的强制步骤。可选详情：[适配器](skills/circuit-teaching-video/references/adapters.md)、[旧合成工作流](skills/circuit-teaching-video/references/executable-workflow.md)、[可选模型门](skills/circuit-teaching-video/references/prefreeze-integration.md)。
 
 ## 许可证
 
-本仓库代码、文档与原创示例采用 [MIT 许可证](LICENSE)，Copyright (c) 2026 cottman99。第三方素材、字体、依赖及服务仍受各自条款约束；MIT 不替代这些权利与义务。详见 [依赖许可说明](THIRD_PARTY_NOTICES.md)。
+本仓库自己的代码、文档和原创示例采用 [MIT](LICENSE)。依赖、字体、服务、模型及第三方讲义仍受各自条款约束。PyMuPDF 的 AGPL/商业许可、FFmpeg 的配置差异和 Edge 的服务条款不被 MIT 覆盖；不作整体 MIT 兼容或再分发合法性的承诺。见 [第三方说明](THIRD_PARTY_NOTICES.md)、[来源范围](PROVENANCE.md) 与 [安全说明](SECURITY.md)。

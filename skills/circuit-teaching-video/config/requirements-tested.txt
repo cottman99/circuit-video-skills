@@ -1,0 +1,11 @@
+# Recorded tested versions, not a required monolithic installation.
+# PyMuPDF is for PDF production; edge-tts is only for optional live speech.
+PyMuPDF==1.26.6
+Pillow==12.3.0
+matplotlib==3.10.8
+numpy==2.3.5
+scipy==1.17.0
+fonttools==4.61.1
+edge-tts==7.3.1
+# External optional parser: MinerU 4.0.12 basic in a separate manually prepared environment.
+# It is intentionally not an installation requirement in this file.

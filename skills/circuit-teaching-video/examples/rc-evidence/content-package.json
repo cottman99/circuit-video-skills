@@ -1,0 +1,1235 @@
+{
+  "schema_version": "circuit-content-package-2",
+  "title": "Original RC evidence-to-preview fixture",
+  "source_model_evidence": {
+    "schema_version": "source-model-script-1",
+    "scope": {
+      "title": "Original RC current-driven fixture",
+      "pages": [
+        1
+      ],
+      "not_full_course": true,
+      "rights": "Original public fixture."
+    },
+    "sources": [
+      {
+        "id": "source",
+        "path": "original_rc_source.txt",
+        "sha256": "36283701ad28ff18118fb91667c742123625d661615876d1fc5e0418fc954fe1",
+        "page_count": 1,
+        "media_type": "text/plain",
+        "authority": "Original authored ideal-model fixture.",
+        "rights": "original_public_fixture"
+      }
+    ],
+    "regions": [
+      {
+        "id": "r-source",
+        "source_ref": "source",
+        "page": 1,
+        "bbox": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "coordinate_system": "original_text_whole_document",
+        "artifact_path": "original_rc_source.txt",
+        "artifact_sha256": "36283701ad28ff18118fb91667c742123625d661615876d1fc5e0418fc954fe1",
+        "render_recipe": "not_applicable",
+        "description": "Complete original text, no external source or image.",
+        "inspection": {
+          "status": "original_text_inspected",
+          "method": "Author inspected original text and model.",
+          "limitation": "No independent physical validation."
+        }
+      }
+    ],
+    "claims": [
+      {
+        "id": "c-model",
+        "text": "R and C connect the excited node to ground.",
+        "kind": "source_statement",
+        "region_refs": [
+          "r-source"
+        ],
+        "model_refs": [
+          "rc"
+        ],
+        "formula_refs": [],
+        "coverage_status": "scripted",
+        "coverage_note": "Covered in the original complete formal derivation.",
+        "review_status": "not_professionally_reviewed"
+      },
+      {
+        "id": "c-impedance",
+        "text": "Z=R/(1+sRC).",
+        "kind": "derived_result",
+        "region_refs": [
+          "r-source"
+        ],
+        "model_refs": [
+          "rc"
+        ],
+        "formula_refs": [
+          "impedance"
+        ],
+        "coverage_status": "scripted",
+        "coverage_note": "Covered in the original complete formal derivation.",
+        "review_status": "not_professionally_reviewed"
+      },
+      {
+        "id": "c-dc",
+        "text": "DC impedance is R.",
+        "kind": "derived_result",
+        "region_refs": [
+          "r-source"
+        ],
+        "model_refs": [
+          "rc"
+        ],
+        "formula_refs": [
+          "dc"
+        ],
+        "coverage_status": "scripted",
+        "coverage_note": "Covered in the original complete formal derivation.",
+        "review_status": "not_professionally_reviewed"
+      }
+    ],
+    "assumptions": [
+      {
+        "id": "a-linear",
+        "fact": "linear_small_signal",
+        "value": true,
+        "statement": "Positive constant R and C; linear time-invariant, zero initial conditions.",
+        "origin": "original_fixture",
+        "region_refs": [
+          "r-source"
+        ]
+      }
+    ],
+    "models": [
+      {
+        "id": "rc",
+        "role": "linear_circuit",
+        "description": "Original ideal parallel RC.",
+        "nodes": [
+          "gnd",
+          "n"
+        ],
+        "reference_node": "gnd",
+        "components": [
+          {
+            "id": "r",
+            "kind": "R",
+            "from": "n",
+            "to": "gnd",
+            "value": "R"
+          },
+          {
+            "id": "c",
+            "kind": "C",
+            "from": "n",
+            "to": "gnd",
+            "value": "C"
+          }
+        ],
+        "parameters": [
+          {
+            "id": "R",
+            "unit": "ohm",
+            "domain": "positive",
+            "sample": 1200,
+            "meaning": "Resistance"
+          },
+          {
+            "id": "C",
+            "unit": "F",
+            "domain": "positive",
+            "sample": 3e-09,
+            "meaning": "Capacitance"
+          }
+        ],
+        "excitation": {
+          "symbol": "iin",
+          "from": "gnd",
+          "to": "n",
+          "unit": "A"
+        },
+        "assumption_refs": [
+          "a-linear"
+        ],
+        "source_region_refs": [
+          "r-source"
+        ],
+        "topology_review": {
+          "status": "agent_transcribed_requires_professional_review",
+          "notes": "Original declared topology, not reconstructed from third-party content."
+        },
+        "formulas": [
+          {
+            "id": "impedance",
+            "expression": "R/(1+s*R*C)",
+            "unit": "ohm",
+            "requirements": {
+              "linear_small_signal": true
+            },
+            "derivation": {
+              "operation": "mna_transfer",
+              "node": "n"
+            },
+            "steps": [
+              "Stamp currents through R and C from n to ground.",
+              "Equate their sum to injected current and solve."
+            ],
+            "claim_refs": [
+              "c-impedance"
+            ]
+          },
+          {
+            "id": "dc",
+            "expression": "R",
+            "unit": "ohm",
+            "requirements": {
+              "linear_small_signal": true
+            },
+            "derivation": {
+              "operation": "mna_transfer",
+              "node": "n",
+              "substitute": {
+                "s": "0"
+              }
+            },
+            "steps": [
+              "Stamp currents through R and C from n to ground.",
+              "Equate their sum to injected current and solve."
+            ],
+            "claim_refs": [
+              "c-dc"
+            ]
+          }
+        ]
+      }
+    ],
+    "knowledge": [
+      {
+        "id": "kcl",
+        "goal": "Apply KCL.",
+        "prerequisite_ids": [],
+        "claim_refs": [],
+        "formula_refs": [],
+        "assumed_prerequisite": true
+      },
+      {
+        "id": "setup",
+        "goal": "Identify node and current direction.",
+        "prerequisite_ids": [
+          "kcl"
+        ],
+        "claim_refs": [
+          "c-model"
+        ],
+        "formula_refs": [],
+        "assumed_prerequisite": false
+      },
+      {
+        "id": "derive",
+        "goal": "Solve the RC impedance.",
+        "prerequisite_ids": [
+          "setup"
+        ],
+        "claim_refs": [
+          "c-impedance"
+        ],
+        "formula_refs": [
+          "impedance"
+        ],
+        "assumed_prerequisite": false
+      },
+      {
+        "id": "limit",
+        "goal": "Check the DC boundary.",
+        "prerequisite_ids": [
+          "derive"
+        ],
+        "claim_refs": [
+          "c-dc"
+        ],
+        "formula_refs": [
+          "dc"
+        ],
+        "assumed_prerequisite": false
+      }
+    ],
+    "master": {
+      "revision": "original-rc-r1",
+      "sentences": [
+        {
+          "id": "s-setup",
+          "text": "Let current i enter node n, with positive constant R and C connected from n to ground; v is the node voltage.",
+          "knowledge_refs": [
+            "setup"
+          ],
+          "claim_refs": [
+            "c-model"
+          ],
+          "formula_refs": []
+        },
+        {
+          "id": "s-derive",
+          "text": "KCL gives i = v/R + s C v; dividing by v and then inverting yields Z = v/i = R/(1+s R C).",
+          "knowledge_refs": [
+            "derive"
+          ],
+          "claim_refs": [
+            "c-impedance"
+          ],
+          "formula_refs": [
+            "impedance"
+          ]
+        },
+        {
+          "id": "s-limit",
+          "text": "At s = 0, the capacitor carries no current in this ideal zero-initial-condition model and Z(0) = R.",
+          "knowledge_refs": [
+            "limit"
+          ],
+          "claim_refs": [
+            "c-dc"
+          ],
+          "formula_refs": [
+            "dc"
+          ]
+        }
+      ],
+      "paragraphs": [
+        {
+          "id": "derivation",
+          "sentence_ids": [
+            "s-setup",
+            "s-derive",
+            "s-limit"
+          ]
+        }
+      ],
+      "sha256": "0c02abb2316af3015cbfb7951c37c965473ad44c61dc85a761bc436dc0e3dd54"
+    },
+    "caption_refs": [
+      {
+        "id": "cap-s-setup",
+        "span_id": "s-setup",
+        "source_range": [
+          0,
+          109
+        ],
+        "master_sha256": "0c02abb2316af3015cbfb7951c37c965473ad44c61dc85a761bc436dc0e3dd54",
+        "slice_sha256": "85d2c996f437d24e14a1a0244a235539f339265081888a143e0c2c08c1162afc"
+      },
+      {
+        "id": "cap-s-derive",
+        "span_id": "s-derive",
+        "source_range": [
+          0,
+          89
+        ],
+        "master_sha256": "0c02abb2316af3015cbfb7951c37c965473ad44c61dc85a761bc436dc0e3dd54",
+        "slice_sha256": "d10abfbba62f3d69158c4bdfbbbff86d7fa72b0e4bb4421275477b997352b227"
+      },
+      {
+        "id": "cap-s-limit",
+        "span_id": "s-limit",
+        "source_range": [
+          0,
+          99
+        ],
+        "master_sha256": "0c02abb2316af3015cbfb7951c37c965473ad44c61dc85a761bc436dc0e3dd54",
+        "slice_sha256": "06a00a2e80f58e14c3bc49a252b28a6ddc7cdc70d9054d06e732f34d56224128"
+      }
+    ],
+    "coverage": {
+      "required_claim_ids": [
+        "c-model",
+        "c-impedance",
+        "c-dc"
+      ],
+      "required_formula_ids": [
+        "impedance",
+        "dc"
+      ],
+      "required_knowledge_ids": [
+        "setup",
+        "derive",
+        "limit"
+      ],
+      "excluded_scope": [
+        "Physical measurements, speech, rendering, scientific review and publication authorization."
+      ]
+    }
+  },
+  "content": {
+    "sources": [
+      {
+        "id": "source",
+        "locator": "original_rc_source.txt",
+        "basis": "original_public_fixture",
+        "sha256": "36283701ad28ff18118fb91667c742123625d661615876d1fc5e0418fc954fe1"
+      }
+    ],
+    "knowledge_graph": {
+      "nodes": [
+        {
+          "id": "kcl",
+          "statement": "Apply KCL.",
+          "source_refs": []
+        },
+        {
+          "id": "setup",
+          "statement": "Identify node and current direction.",
+          "source_refs": [
+            "source"
+          ]
+        },
+        {
+          "id": "derive",
+          "statement": "Solve the RC impedance.",
+          "source_refs": [
+            "source"
+          ]
+        },
+        {
+          "id": "limit",
+          "statement": "Check the DC boundary.",
+          "source_refs": [
+            "source"
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "from": "kcl",
+          "to": "setup",
+          "type": "prerequisite"
+        },
+        {
+          "from": "setup",
+          "to": "derive",
+          "type": "prerequisite"
+        },
+        {
+          "from": "derive",
+          "to": "limit",
+          "type": "prerequisite"
+        }
+      ]
+    },
+    "semantic_model": {
+      "id": "rc",
+      "assumptions": [
+        "a-linear"
+      ],
+      "nets": [
+        "gnd",
+        "n"
+      ],
+      "components": [
+        {
+          "id": "r",
+          "kind": "R",
+          "terminals": {
+            "from": "n",
+            "to": "gnd"
+          },
+          "object_refs": [
+            "model.r",
+            "model.r-label"
+          ]
+        },
+        {
+          "id": "c",
+          "kind": "C",
+          "terminals": {
+            "from": "n",
+            "to": "gnd"
+          },
+          "object_refs": [
+            "model.c-plate1",
+            "model.c-plate2",
+            "model.c-label"
+          ]
+        }
+      ],
+      "formulas": [
+        {
+          "id": "impedance",
+          "object_ref": "model.impedance",
+          "component_refs": [
+            "r",
+            "c"
+          ],
+          "knowledge_refs": [
+            "derive"
+          ]
+        },
+        {
+          "id": "dc",
+          "object_ref": "model.dc",
+          "component_refs": [
+            "r",
+            "c"
+          ],
+          "knowledge_refs": [
+            "limit"
+          ]
+        }
+      ]
+    },
+    "narration": [
+      {
+        "id": "s-setup",
+        "text": "Let current i enter node n, with positive constant R and C connected from n to ground; v is the node voltage."
+      },
+      {
+        "id": "s-derive",
+        "text": "KCL gives i = v/R + s C v; dividing by v and then inverting yields Z = v/i = R/(1+s R C)."
+      },
+      {
+        "id": "s-limit",
+        "text": "At s = 0, the capacitor carries no current in this ideal zero-initial-condition model and Z(0) = R."
+      }
+    ]
+  },
+  "visual": {
+    "layout_contract": {
+      "schema_version": "whiteboard-layout-1",
+      "whiteboard": [
+        2,
+        2,
+        1916,
+        1076
+      ],
+      "world_viewport": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "content_clip": [
+        0,
+        0,
+        1920,
+        956
+      ],
+      "subtitle_zone": [
+        48,
+        968,
+        1824,
+        96
+      ],
+      "subtitles": {
+        "font_size": 34,
+        "minimum_font_size": 34,
+        "max_lines": 2,
+        "line_height": 44,
+        "horizontal_padding": 14,
+        "font_weight": 400,
+        "font_family": "Noto Sans CJK SC",
+        "color": "#252a30"
+      },
+      "metadata": {
+        "minimum_font_size": 22,
+        "max_lines_per_object": 2,
+        "line_gap": 5,
+        "object_gap": 10,
+        "source_minimum_font_size": 19
+      },
+      "board_zones": {
+        "title": [
+          0.03,
+          0.02,
+          0.45,
+          0.14
+        ],
+        "metadata": [
+          0.505,
+          0.025,
+          0.47,
+          0.13
+        ],
+        "body": [
+          0.03,
+          0.17,
+          0.94,
+          0.68
+        ],
+        "subtitle_reserve": [
+          0,
+          0.885,
+          1,
+          0.115
+        ]
+      },
+      "world_border_policy": "overview_only",
+      "caption_anchor": "screen_inside_persistent_whiteboard",
+      "overflow_policy": "reject_not_shrink"
+    },
+    "required_capabilities": [
+      "frozen_scene",
+      "cumulative_objects",
+      "semantic_actions",
+      "direct_pan",
+      "closing_pullback",
+      "full_frame_receipts",
+      "internal_subtitle_strip"
+    ],
+    "boards": [
+      {
+        "id": "model",
+        "bounds": [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        "object_refs": [
+          "model.border",
+          "model.title",
+          "model.note",
+          "model.source",
+          "model.top-bus",
+          "model.bottom-bus",
+          "model.r-top",
+          "model.r",
+          "model.r-bottom",
+          "model.c-top",
+          "model.c-plate1",
+          "model.c-plate2",
+          "model.c-bottom",
+          "model.input",
+          "model.input-arrow",
+          "model.ground",
+          "model.ground-bar",
+          "model.input-label",
+          "model.node-label",
+          "model.r-label",
+          "model.c-label",
+          "model.ground-label",
+          "model.impedance-label",
+          "model.dc-label",
+          "model.impedance",
+          "model.dc"
+        ],
+        "layout": {
+          "title_objects": [
+            "model.title"
+          ],
+          "metadata_objects": [
+            "model.note",
+            "model.source"
+          ],
+          "border_object": "model.border"
+        }
+      }
+    ],
+    "objects": [
+      {
+        "id": "model.border",
+        "kind": "rect",
+        "world_bounds": [
+          2,
+          2,
+          1916,
+          1076
+        ],
+        "stroke": "#bfd0de",
+        "width": 2
+      },
+      {
+        "id": "model.title",
+        "kind": "text",
+        "text": "Original parallel RC model",
+        "xy": [
+          70,
+          40
+        ],
+        "world_bounds": [
+          70,
+          40,
+          1,
+          1
+        ],
+        "size": 42,
+        "typography_role": "title"
+      },
+      {
+        "id": "model.note",
+        "kind": "text",
+        "text": "Positive constant R, C; zero initial conditions",
+        "xy": [
+          1000,
+          30
+        ],
+        "world_bounds": [
+          1000,
+          30,
+          1,
+          1
+        ],
+        "size": 22,
+        "typography_role": "note"
+      },
+      {
+        "id": "model.source",
+        "kind": "text",
+        "text": "Original source; machine checks are not scientific review",
+        "xy": [
+          1000,
+          75
+        ],
+        "world_bounds": [
+          1000,
+          75,
+          1,
+          1
+        ],
+        "size": 19,
+        "typography_role": "source"
+      },
+      {
+        "id": "model.top-bus",
+        "kind": "line",
+        "points": [
+          [
+            300,
+            300
+          ],
+          [
+            700,
+            300
+          ]
+        ],
+        "world_bounds": [
+          300,
+          300,
+          400,
+          1
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.bottom-bus",
+        "kind": "line",
+        "points": [
+          [
+            400,
+            650
+          ],
+          [
+            700,
+            650
+          ]
+        ],
+        "world_bounds": [
+          400,
+          650,
+          300,
+          1
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.r-top",
+        "kind": "line",
+        "points": [
+          [
+            400,
+            300
+          ],
+          [
+            400,
+            390
+          ]
+        ],
+        "world_bounds": [
+          400,
+          300,
+          1,
+          90
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.r",
+        "kind": "rect",
+        "world_bounds": [
+          370,
+          390,
+          60,
+          120
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.r-bottom",
+        "kind": "line",
+        "points": [
+          [
+            400,
+            510
+          ],
+          [
+            400,
+            650
+          ]
+        ],
+        "world_bounds": [
+          400,
+          510,
+          1,
+          140
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.c-top",
+        "kind": "line",
+        "points": [
+          [
+            700,
+            300
+          ],
+          [
+            700,
+            430
+          ]
+        ],
+        "world_bounds": [
+          700,
+          300,
+          1,
+          130
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.c-plate1",
+        "kind": "line",
+        "points": [
+          [
+            660,
+            430
+          ],
+          [
+            740,
+            430
+          ]
+        ],
+        "world_bounds": [
+          660,
+          430,
+          80,
+          1
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.c-plate2",
+        "kind": "line",
+        "points": [
+          [
+            660,
+            465
+          ],
+          [
+            740,
+            465
+          ]
+        ],
+        "world_bounds": [
+          660,
+          465,
+          80,
+          1
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.c-bottom",
+        "kind": "line",
+        "points": [
+          [
+            700,
+            465
+          ],
+          [
+            700,
+            650
+          ]
+        ],
+        "world_bounds": [
+          700,
+          465,
+          1,
+          185
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.input",
+        "kind": "line",
+        "points": [
+          [
+            160,
+            300
+          ],
+          [
+            300,
+            300
+          ]
+        ],
+        "world_bounds": [
+          160,
+          300,
+          140,
+          1
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.input-arrow",
+        "kind": "line",
+        "points": [
+          [
+            280,
+            285
+          ],
+          [
+            300,
+            300
+          ],
+          [
+            280,
+            315
+          ]
+        ],
+        "world_bounds": [
+          280,
+          285,
+          20,
+          30
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.ground",
+        "kind": "line",
+        "points": [
+          [
+            550,
+            650
+          ],
+          [
+            550,
+            700
+          ]
+        ],
+        "world_bounds": [
+          550,
+          650,
+          1,
+          50
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.ground-bar",
+        "kind": "line",
+        "points": [
+          [
+            520,
+            700
+          ],
+          [
+            580,
+            700
+          ]
+        ],
+        "world_bounds": [
+          520,
+          700,
+          60,
+          1
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.input-label",
+        "kind": "text",
+        "text": "i",
+        "xy": [
+          190,
+          245
+        ],
+        "world_bounds": [
+          190,
+          245,
+          1,
+          1
+        ],
+        "size": 30,
+        "typography_role": "body"
+      },
+      {
+        "id": "model.node-label",
+        "kind": "text",
+        "text": "n: v",
+        "xy": [
+          430,
+          240
+        ],
+        "world_bounds": [
+          430,
+          240,
+          1,
+          1
+        ],
+        "size": 30,
+        "typography_role": "body"
+      },
+      {
+        "id": "model.r-label",
+        "kind": "text",
+        "text": "R",
+        "xy": [
+          455,
+          430
+        ],
+        "world_bounds": [
+          455,
+          430,
+          1,
+          1
+        ],
+        "size": 30,
+        "typography_role": "body"
+      },
+      {
+        "id": "model.c-label",
+        "kind": "text",
+        "text": "C",
+        "xy": [
+          760,
+          430
+        ],
+        "world_bounds": [
+          760,
+          430,
+          1,
+          1
+        ],
+        "size": 30,
+        "typography_role": "body"
+      },
+      {
+        "id": "model.ground-label",
+        "kind": "text",
+        "text": "gnd",
+        "xy": [
+          515,
+          720
+        ],
+        "world_bounds": [
+          515,
+          720,
+          1,
+          1
+        ],
+        "size": 30,
+        "typography_role": "body"
+      },
+      {
+        "id": "model.impedance-label",
+        "kind": "text",
+        "text": "Impedance Z(s)",
+        "xy": [
+          1000,
+          280
+        ],
+        "world_bounds": [
+          1000,
+          280,
+          1,
+          1
+        ],
+        "size": 30,
+        "typography_role": "body"
+      },
+      {
+        "id": "model.dc-label",
+        "kind": "text",
+        "text": "DC limit Z(0)",
+        "xy": [
+          1000,
+          560
+        ],
+        "world_bounds": [
+          1000,
+          560,
+          1,
+          1
+        ],
+        "size": 30,
+        "typography_role": "body"
+      },
+      {
+        "id": "model.impedance",
+        "kind": "formula",
+        "latex": "\\frac{R}{C R s + 1}",
+        "world_bounds": [
+          1000,
+          350,
+          1,
+          1
+        ],
+        "font_size": 46
+      },
+      {
+        "id": "model.dc",
+        "kind": "formula",
+        "latex": "R",
+        "world_bounds": [
+          1000,
+          630,
+          1,
+          1
+        ],
+        "font_size": 46
+      }
+    ],
+    "required_object_ids": [
+      "model.border",
+      "model.title",
+      "model.note",
+      "model.source",
+      "model.top-bus",
+      "model.bottom-bus",
+      "model.r-top",
+      "model.r",
+      "model.r-bottom",
+      "model.c-top",
+      "model.c-plate1",
+      "model.c-plate2",
+      "model.c-bottom",
+      "model.input",
+      "model.input-arrow",
+      "model.ground",
+      "model.ground-bar",
+      "model.input-label",
+      "model.node-label",
+      "model.r-label",
+      "model.c-label",
+      "model.ground-label",
+      "model.impedance-label",
+      "model.dc-label",
+      "model.impedance",
+      "model.dc"
+    ],
+    "camera_bounds": [
+      0,
+      0,
+      1920,
+      1080
+    ]
+  },
+  "voice": {
+    "name": "synthetic-fixture-not-a-provider",
+    "rate": "+0%"
+  },
+  "caption_refs": [
+    {
+      "id": "cap-s-setup",
+      "narration_id": "s-setup",
+      "source_range": [
+        0,
+        109
+      ]
+    },
+    {
+      "id": "cap-s-derive",
+      "narration_id": "s-derive",
+      "source_range": [
+        0,
+        89
+      ]
+    },
+    {
+      "id": "cap-s-limit",
+      "narration_id": "s-limit",
+      "source_range": [
+        0,
+        99
+      ]
+    }
+  ],
+  "temporal": {
+    "actions": [
+      {
+        "id": "reveal-impedance",
+        "target": "model.impedance",
+        "narration_id": "s-derive",
+        "earliest_offset": 0.2,
+        "deadline_offset": 0,
+        "min_reveal_seconds": 0.5,
+        "min_read_seconds": 1.2,
+        "after": []
+      },
+      {
+        "id": "reveal-dc",
+        "target": "model.dc",
+        "narration_id": "s-limit",
+        "earliest_offset": 0.2,
+        "deadline_offset": 0,
+        "min_reveal_seconds": 0.5,
+        "min_read_seconds": 1.2,
+        "after": [
+          "reveal-impedance"
+        ]
+      }
+    ],
+    "caption_max_codepoints_per_second": 30,
+    "caption_min_seconds": 0.5
+  },
+  "synthetic_fixture": {
+    "schema_version": "synthetic-sentence-fixture-1",
+    "sentences": [
+      {
+        "narration_id": "s-setup",
+        "duration_seconds": 4.5,
+        "gap_before_seconds": 0.2
+      },
+      {
+        "narration_id": "s-derive",
+        "duration_seconds": 4,
+        "gap_before_seconds": 0.2
+      },
+      {
+        "narration_id": "s-limit",
+        "duration_seconds": 4.5,
+        "gap_before_seconds": 0.2
+      }
+    ],
+    "tail_seconds": 0.4
+  }
+}

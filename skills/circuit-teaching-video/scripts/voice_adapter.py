@@ -5,12 +5,14 @@ This adapter is network-dependent and was not exercised against the live provide
 in the public release smoke test. No word-alignment or pronunciation claim.
 """
 from pathlib import Path
-import argparse,asyncio,hashlib,json,math,os,re,subprocess,tempfile,time,wave
+import argparse,asyncio,copy,hashlib,json,math,os,re,subprocess,sys,tempfile,time,wave
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'rendering'))
+from speech_text import build_speech_plan
 HERE=Path.cwd()
 def validate_spoken_policy(plan):
- for beat in plan['beats']:
-  ensure(beat.get('spoken_text') and beat.get('display_text'),'Missing canonical/spoken text')
-  ensure(beat.get('semantics_unchanged') is True,'Author must confirm meaning-preserving spoken adaptation')
+ ensure(plan.get('narration'),'Missing complete formal transcript')
+ expected=build_speech_plan(plan['narration'],plan['voice'])
+ ensure(plan.get('beats')==expected['beats'],'Spoken output/span map must be derived from the formal transcript, not independently edited')
 
 
 def load(p):return json.loads(Path(p).read_text())
@@ -21,7 +23,9 @@ def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 def digest(d):return hashlib.sha256(json.dumps(d,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 
-def speech_digest(plan):return digest({'voice':plan['voice'],'sentences':[{k:b[k] for k in ('sentence_id','spoken_text','display_text')} for b in plan['beats']]})
+def speech_digest(plan):
+ validate_spoken_policy(plan)
+ return digest(build_speech_plan(plan['narration'],plan['voice']))
 
 def norm(t):return re.sub(r'\s+','',t)
 
@@ -73,14 +77,18 @@ async def synthesize(plan,base=HERE):
    ensure(0<=start<end and start>=previous_end,'Provider sentence times must be positive, ordered and nonoverlapping')
    ensure(end<=duration+1/sr,'Provider sentence extends beyond decoded PCM duration')
    previous_end=end
-   sentences.append({'sentence_id':beat['sentence_id'],'spoken_text':beat['spoken_text'],'display_text':beat['display_text'],'start':start,'end':end,'provider_event_indices':[index],'boundary_source':'provider SentenceBoundary'})
+   sentences.append({'sentence_id':beat['sentence_id'],'spoken_text':beat['spoken_text'],'formal_text':beat['formal_text'],'formal_text_sha256':beat['formal_text_sha256'],'span_map':beat['span_map'],'start':start,'end':end,'provider_event_indices':[index],'boundary_source':'provider SentenceBoundary'})
   audio={'path':'audio/narration.wav','sha256':sha(decoded),'pcm_sha256':hashlib.sha256(pcm).hexdigest(),'pcm_frames':frames,'sample_rate':sr,'channels':channels,'sample_width_bytes':width,'duration':duration,'source_mp3_sha256':mp3_hash,'decode_method':'ffmpeg_pcm_s16le_24000hz_mono_fresh_decode'}
   decoded.replace(wav)
  receipt={'schema_version':1,'speech_sha256':speech_digest(plan),'provider':'edge_tts','voice':voice,'provider_events_path':'audio/provider_events.json','provider_events_sha256':metadata_hash,'provider_validation':{'text_exact_match':True,'boundary_granularity':'sentence','paragraph_requests':1,'asr_used':False,'manual_word_timing_used':False,'cached_request_revalidated':True,'pcm_rederived_from_verified_mp3':True,'sentence_bounds_within_pcm':True},'audio':audio,'sentences':sentences}
  dump(base/'voice_receipt.json',receipt);return receipt
 
 def plan_from_lesson(lesson):
- return {'voice':lesson['voice'],'beats':[{'id':n['id'],'sentence_id':n['id'],'spoken_text':n['spoken_text'],'display_text':n['display_text'],'semantics_unchanged':n.get('semantics_unchanged')} for n in lesson['narration']]}
+ narration=[{k:copy.deepcopy(n[k]) for k in ('id','text','speech_adaptations') if k in n} for n in lesson['narration']]
+ # Derive before stripping any legacy fields so competing transcripts fail closed.
+ result=build_speech_plan(lesson['narration'],lesson['voice'])
+ result['narration']=narration
+ return result
 
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('lesson',type=Path);p.add_argument('--output',type=Path,required=True);p.add_argument('--synthesize',action='store_true');a=p.parse_args()

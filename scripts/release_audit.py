@@ -3,7 +3,7 @@
 from pathlib import Path
 import argparse,ast,hashlib,json,re,sys
 ROOT=Path(__file__).resolve().parents[1]
-BANNED_EXT={'.pdf','.mp4','.wav','.mp3','.mov','.zip','.ttf','.otf','.ttc','.pyc','.pyo'}
+BANNED_EXT={'.pdf','.mp4','.wav','.mp3','.mov','.zip','.ttf','.otf','.ttc','.pyc','.pyo','.onnx','.safetensors','.pt','.pth','.gguf','.ckpt','.pem','.key'}
 PATTERNS={
  'private_conversation_id':r'(?:Sentinel|libfile)_[A-Za-z0-9]{12,}',
  'private_workspace_path':r'/(?:workspace|mnt/data|home/agent)(?:/|\b)',
@@ -21,6 +21,7 @@ def audit(root):
   if p.is_symlink():findings.append({'file':p.relative_to(root).as_posix(),'issue':'symlink'});continue
   if not p.is_file():continue
   rel=p.relative_to(root).as_posix()
+  if p.name=='CourseProject.json' or p.name.startswith('.env') or p.name in {'provider_events.json','voice_receipt.normalized.json'}:findings.append({'file':rel,'issue':'private_project_or_account_artifact'})
   if p.suffix.lower() in BANNED_EXT or '__pycache__' in p.parts:findings.append({'file':rel,'issue':'excluded_media_font_or_runtime_file'})
   if p.stat().st_size>2_000_000:findings.append({'file':rel,'issue':'unexpected_large_file'})
   if rel not in ['RELEASE_AUDIT.json','artifact_manifest.json']:files[rel]=hashlib.sha256(p.read_bytes()).hexdigest()

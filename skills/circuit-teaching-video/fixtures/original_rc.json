@@ -1,0 +1,365 @@
+{
+  "schema_version": "source-model-script-1",
+  "scope": {
+    "title": "Original RC current-driven fixture",
+    "pages": [
+      1
+    ],
+    "not_full_course": true,
+    "rights": "Original public fixture."
+  },
+  "sources": [
+    {
+      "id": "source",
+      "path": "original_rc_source.txt",
+      "sha256": "36283701ad28ff18118fb91667c742123625d661615876d1fc5e0418fc954fe1",
+      "page_count": 1,
+      "media_type": "text/plain",
+      "authority": "Original authored ideal-model fixture.",
+      "rights": "original_public_fixture"
+    }
+  ],
+  "regions": [
+    {
+      "id": "r-source",
+      "source_ref": "source",
+      "page": 1,
+      "bbox": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "coordinate_system": "original_text_whole_document",
+      "artifact_path": "original_rc_source.txt",
+      "artifact_sha256": "36283701ad28ff18118fb91667c742123625d661615876d1fc5e0418fc954fe1",
+      "render_recipe": "not_applicable",
+      "description": "Complete original text, no external source or image.",
+      "inspection": {
+        "status": "original_text_inspected",
+        "method": "Author inspected original text and model.",
+        "limitation": "No independent physical validation."
+      }
+    }
+  ],
+  "claims": [
+    {
+      "id": "c-model",
+      "text": "R and C connect the excited node to ground.",
+      "kind": "source_statement",
+      "region_refs": [
+        "r-source"
+      ],
+      "model_refs": [
+        "rc"
+      ],
+      "formula_refs": [],
+      "coverage_status": "scripted",
+      "coverage_note": "Covered in the original complete formal derivation.",
+      "review_status": "not_professionally_reviewed"
+    },
+    {
+      "id": "c-impedance",
+      "text": "Z=R/(1+sRC).",
+      "kind": "derived_result",
+      "region_refs": [
+        "r-source"
+      ],
+      "model_refs": [
+        "rc"
+      ],
+      "formula_refs": [
+        "impedance"
+      ],
+      "coverage_status": "scripted",
+      "coverage_note": "Covered in the original complete formal derivation.",
+      "review_status": "not_professionally_reviewed"
+    },
+    {
+      "id": "c-dc",
+      "text": "DC impedance is R.",
+      "kind": "derived_result",
+      "region_refs": [
+        "r-source"
+      ],
+      "model_refs": [
+        "rc"
+      ],
+      "formula_refs": [
+        "dc"
+      ],
+      "coverage_status": "scripted",
+      "coverage_note": "Covered in the original complete formal derivation.",
+      "review_status": "not_professionally_reviewed"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a-linear",
+      "fact": "linear_small_signal",
+      "value": true,
+      "statement": "Positive constant R and C; linear time-invariant, zero initial conditions.",
+      "origin": "original_fixture",
+      "region_refs": [
+        "r-source"
+      ]
+    }
+  ],
+  "models": [
+    {
+      "id": "rc",
+      "role": "linear_circuit",
+      "description": "Original ideal parallel RC.",
+      "nodes": [
+        "gnd",
+        "n"
+      ],
+      "reference_node": "gnd",
+      "components": [
+        {
+          "id": "r",
+          "kind": "R",
+          "from": "n",
+          "to": "gnd",
+          "value": "R"
+        },
+        {
+          "id": "c",
+          "kind": "C",
+          "from": "n",
+          "to": "gnd",
+          "value": "C"
+        }
+      ],
+      "parameters": [
+        {
+          "id": "R",
+          "unit": "ohm",
+          "domain": "positive",
+          "sample": 1200,
+          "meaning": "Resistance"
+        },
+        {
+          "id": "C",
+          "unit": "F",
+          "domain": "positive",
+          "sample": 3e-09,
+          "meaning": "Capacitance"
+        }
+      ],
+      "excitation": {
+        "symbol": "iin",
+        "from": "gnd",
+        "to": "n",
+        "unit": "A"
+      },
+      "assumption_refs": [
+        "a-linear"
+      ],
+      "source_region_refs": [
+        "r-source"
+      ],
+      "topology_review": {
+        "status": "agent_transcribed_requires_professional_review",
+        "notes": "Original declared topology, not reconstructed from third-party content."
+      },
+      "formulas": [
+        {
+          "id": "impedance",
+          "expression": "R/(1+s*R*C)",
+          "unit": "ohm",
+          "requirements": {
+            "linear_small_signal": true
+          },
+          "derivation": {
+            "operation": "mna_transfer",
+            "node": "n"
+          },
+          "steps": [
+            "Stamp currents through R and C from n to ground.",
+            "Equate their sum to injected current and solve."
+          ],
+          "claim_refs": [
+            "c-impedance"
+          ]
+        },
+        {
+          "id": "dc",
+          "expression": "R",
+          "unit": "ohm",
+          "requirements": {
+            "linear_small_signal": true
+          },
+          "derivation": {
+            "operation": "mna_transfer",
+            "node": "n",
+            "substitute": {
+              "s": "0"
+            }
+          },
+          "steps": [
+            "Stamp currents through R and C from n to ground.",
+            "Equate their sum to injected current and solve."
+          ],
+          "claim_refs": [
+            "c-dc"
+          ]
+        }
+      ]
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "kcl",
+      "goal": "Apply KCL.",
+      "prerequisite_ids": [],
+      "claim_refs": [],
+      "formula_refs": [],
+      "assumed_prerequisite": true
+    },
+    {
+      "id": "setup",
+      "goal": "Identify node and current direction.",
+      "prerequisite_ids": [
+        "kcl"
+      ],
+      "claim_refs": [
+        "c-model"
+      ],
+      "formula_refs": [],
+      "assumed_prerequisite": false
+    },
+    {
+      "id": "derive",
+      "goal": "Solve the RC impedance.",
+      "prerequisite_ids": [
+        "setup"
+      ],
+      "claim_refs": [
+        "c-impedance"
+      ],
+      "formula_refs": [
+        "impedance"
+      ],
+      "assumed_prerequisite": false
+    },
+    {
+      "id": "limit",
+      "goal": "Check the DC boundary.",
+      "prerequisite_ids": [
+        "derive"
+      ],
+      "claim_refs": [
+        "c-dc"
+      ],
+      "formula_refs": [
+        "dc"
+      ],
+      "assumed_prerequisite": false
+    }
+  ],
+  "master": {
+    "revision": "original-rc-r1",
+    "sentences": [
+      {
+        "id": "s-setup",
+        "text": "Let current i enter node n, with positive constant R and C connected from n to ground; v is the node voltage.",
+        "knowledge_refs": [
+          "setup"
+        ],
+        "claim_refs": [
+          "c-model"
+        ],
+        "formula_refs": []
+      },
+      {
+        "id": "s-derive",
+        "text": "KCL gives i = v/R + s C v; dividing by v and then inverting yields Z = v/i = R/(1+s R C).",
+        "knowledge_refs": [
+          "derive"
+        ],
+        "claim_refs": [
+          "c-impedance"
+        ],
+        "formula_refs": [
+          "impedance"
+        ]
+      },
+      {
+        "id": "s-limit",
+        "text": "At s = 0, the capacitor carries no current in this ideal zero-initial-condition model and Z(0) = R.",
+        "knowledge_refs": [
+          "limit"
+        ],
+        "claim_refs": [
+          "c-dc"
+        ],
+        "formula_refs": [
+          "dc"
+        ]
+      }
+    ],
+    "paragraphs": [
+      {
+        "id": "derivation",
+        "sentence_ids": [
+          "s-setup",
+          "s-derive",
+          "s-limit"
+        ]
+      }
+    ],
+    "sha256": "0c02abb2316af3015cbfb7951c37c965473ad44c61dc85a761bc436dc0e3dd54"
+  },
+  "caption_refs": [
+    {
+      "id": "cap-s-setup",
+      "span_id": "s-setup",
+      "source_range": [
+        0,
+        109
+      ],
+      "master_sha256": "0c02abb2316af3015cbfb7951c37c965473ad44c61dc85a761bc436dc0e3dd54",
+      "slice_sha256": "85d2c996f437d24e14a1a0244a235539f339265081888a143e0c2c08c1162afc"
+    },
+    {
+      "id": "cap-s-derive",
+      "span_id": "s-derive",
+      "source_range": [
+        0,
+        89
+      ],
+      "master_sha256": "0c02abb2316af3015cbfb7951c37c965473ad44c61dc85a761bc436dc0e3dd54",
+      "slice_sha256": "d10abfbba62f3d69158c4bdfbbbff86d7fa72b0e4bb4421275477b997352b227"
+    },
+    {
+      "id": "cap-s-limit",
+      "span_id": "s-limit",
+      "source_range": [
+        0,
+        99
+      ],
+      "master_sha256": "0c02abb2316af3015cbfb7951c37c965473ad44c61dc85a761bc436dc0e3dd54",
+      "slice_sha256": "06a00a2e80f58e14c3bc49a252b28a6ddc7cdc70d9054d06e732f34d56224128"
+    }
+  ],
+  "coverage": {
+    "required_claim_ids": [
+      "c-model",
+      "c-impedance",
+      "c-dc"
+    ],
+    "required_formula_ids": [
+      "impedance",
+      "dc"
+    ],
+    "required_knowledge_ids": [
+      "setup",
+      "derive",
+      "limit"
+    ],
+    "excluded_scope": [
+      "Physical measurements, speech, rendering, scientific review and publication authorization."
+    ]
+  }
+}

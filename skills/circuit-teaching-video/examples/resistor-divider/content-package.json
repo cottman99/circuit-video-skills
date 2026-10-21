@@ -1,0 +1,785 @@
+{
+  "schema_version": "circuit-content-package-1",
+  "title": "An unloaded divider: executable local workflow",
+  "content": {
+    "sources": [
+      {
+        "id": "original",
+        "locator": "Original synthetic demonstration created for this repository",
+        "basis": "Ohm law and Kirchhoff voltage law; no external lesson assets"
+      }
+    ],
+    "knowledge_graph": {
+      "nodes": [
+        {
+          "id": "model",
+          "statement": "An ideal voltage source drives two series resistors with no output load",
+          "source_refs": [
+            "original"
+          ]
+        },
+        {
+          "id": "derive",
+          "statement": "The same series current flows through both resistors",
+          "source_refs": [
+            "original"
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "from": "model",
+          "to": "derive",
+          "type": "prerequisite"
+        }
+      ]
+    },
+    "semantic_model": {
+      "id": "unloaded-divider",
+      "assumptions": [
+        "Ideal source",
+        "No output load",
+        "Linear positive resistors"
+      ],
+      "nets": [
+        "vin",
+        "vout",
+        "ground"
+      ],
+      "components": [
+        {
+          "id": "R1",
+          "kind": "resistor",
+          "terminals": {
+            "a": "vin",
+            "b": "vout"
+          },
+          "object_refs": [
+            "model.r1",
+            "model.r1-label"
+          ]
+        },
+        {
+          "id": "R2",
+          "kind": "resistor",
+          "terminals": {
+            "a": "vout",
+            "b": "ground"
+          },
+          "object_refs": [
+            "model.r2",
+            "model.r2-label"
+          ]
+        }
+      ],
+      "formulas": [
+        {
+          "id": "series-current",
+          "object_ref": "model.current",
+          "component_refs": [
+            "R1",
+            "R2"
+          ],
+          "knowledge_refs": [
+            "model"
+          ]
+        },
+        {
+          "id": "divider-transfer",
+          "object_ref": "model.divider",
+          "component_refs": [
+            "R1",
+            "R2"
+          ],
+          "knowledge_refs": [
+            "derive"
+          ]
+        }
+      ]
+    },
+    "narration": [
+      {
+        "id": "speech-model",
+        "text": "With no output load, the same current flows through R₁ and R₂.",
+        "speech_adaptations": [
+          {
+            "source_range": [
+              52,
+              54
+            ],
+            "source_text": "R₁",
+            "kind": "notation",
+            "meaning": "subscript"
+          },
+          {
+            "source_range": [
+              59,
+              61
+            ],
+            "source_text": "R₂",
+            "kind": "notation",
+            "meaning": "subscript"
+          }
+        ]
+      },
+      {
+        "id": "speech-transfer",
+        "text": "The output voltage is the input voltage times R₂ divided by the sum of R₁ and R₂.",
+        "speech_adaptations": [
+          {
+            "source_range": [
+              46,
+              48
+            ],
+            "source_text": "R₂",
+            "kind": "notation",
+            "meaning": "subscript"
+          },
+          {
+            "source_range": [
+              71,
+              73
+            ],
+            "source_text": "R₁",
+            "kind": "notation",
+            "meaning": "subscript"
+          },
+          {
+            "source_range": [
+              78,
+              80
+            ],
+            "source_text": "R₂",
+            "kind": "notation",
+            "meaning": "subscript"
+          }
+        ]
+      }
+    ]
+  },
+  "visual": {
+    "layout_contract": {
+      "schema_version": "whiteboard-layout-1",
+      "whiteboard": [
+        2,
+        2,
+        1916,
+        1076
+      ],
+      "world_viewport": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "content_clip": [
+        0,
+        0,
+        1920,
+        956
+      ],
+      "subtitle_zone": [
+        48,
+        968,
+        1824,
+        96
+      ],
+      "subtitles": {
+        "font_size": 34,
+        "minimum_font_size": 34,
+        "max_lines": 2,
+        "line_height": 44,
+        "horizontal_padding": 14,
+        "font_weight": 400,
+        "font_family": "Noto Sans CJK SC",
+        "color": "#252a30"
+      },
+      "metadata": {
+        "minimum_font_size": 22,
+        "max_lines_per_object": 2,
+        "line_gap": 5,
+        "object_gap": 10,
+        "source_minimum_font_size": 19
+      },
+      "board_zones": {
+        "title": [
+          0.03,
+          0.02,
+          0.45,
+          0.14
+        ],
+        "metadata": [
+          0.505,
+          0.025,
+          0.47,
+          0.13
+        ],
+        "body": [
+          0.03,
+          0.17,
+          0.94,
+          0.68
+        ],
+        "subtitle_reserve": [
+          0,
+          0.885,
+          1,
+          0.115
+        ]
+      },
+      "world_border_policy": "overview_only",
+      "caption_anchor": "screen_inside_persistent_whiteboard",
+      "overflow_policy": "reject_not_shrink"
+    },
+    "required_capabilities": [
+      "frozen_scene",
+      "cumulative_objects",
+      "semantic_actions",
+      "direct_pan",
+      "closing_pullback",
+      "full_frame_receipts",
+      "internal_subtitle_strip"
+    ],
+    "boards": [
+      {
+        "id": "model",
+        "bounds": [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        "object_refs": [
+          "model.border",
+          "model.title",
+          "model.note",
+          "model.source",
+          "model.upper-wire",
+          "model.r1",
+          "model.middle-wire",
+          "model.out-wire",
+          "model.r2",
+          "model.lower-wire",
+          "model.ground0",
+          "model.ground1",
+          "model.ground2",
+          "model.vin",
+          "model.r1-label",
+          "model.vout",
+          "model.r2-label",
+          "model.current",
+          "model.divider",
+          "model.why"
+        ],
+        "layout": {
+          "title_objects": [
+            "model.title"
+          ],
+          "metadata_objects": [
+            "model.note",
+            "model.source"
+          ],
+          "border_object": "model.border"
+        }
+      }
+    ],
+    "objects": [
+      {
+        "id": "model.border",
+        "kind": "rect",
+        "world_bounds": [
+          2,
+          2,
+          1916,
+          1076
+        ],
+        "stroke": "#bfd0de",
+        "width": 2
+      },
+      {
+        "id": "model.title",
+        "kind": "text",
+        "text": "1. Define the circuit",
+        "xy": [
+          70,
+          40
+        ],
+        "world_bounds": [
+          70,
+          40,
+          1,
+          1
+        ],
+        "size": 42,
+        "typography_role": "title"
+      },
+      {
+        "id": "model.note",
+        "kind": "text",
+        "text": "Assumptions: ideal source; no load",
+        "xy": [
+          1000,
+          30
+        ],
+        "world_bounds": [
+          1000,
+          30,
+          1,
+          1
+        ],
+        "size": 22,
+        "typography_role": "note"
+      },
+      {
+        "id": "model.source",
+        "kind": "text",
+        "text": "Original synthetic example",
+        "xy": [
+          1000,
+          75
+        ],
+        "world_bounds": [
+          1000,
+          75,
+          1,
+          1
+        ],
+        "size": 19,
+        "typography_role": "source"
+      },
+      {
+        "id": "model.upper-wire",
+        "kind": "line",
+        "points": [
+          [
+            400,
+            230
+          ],
+          [
+            400,
+            290
+          ]
+        ],
+        "world_bounds": [
+          400,
+          230,
+          1,
+          60
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.r1",
+        "kind": "line",
+        "points": [
+          [
+            400,
+            290
+          ],
+          [
+            380,
+            310
+          ],
+          [
+            420,
+            340
+          ],
+          [
+            380,
+            370
+          ],
+          [
+            420,
+            400
+          ],
+          [
+            400,
+            420
+          ]
+        ],
+        "world_bounds": [
+          380,
+          290,
+          40,
+          130
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.middle-wire",
+        "kind": "line",
+        "points": [
+          [
+            400,
+            420
+          ],
+          [
+            400,
+            520
+          ]
+        ],
+        "world_bounds": [
+          400,
+          420,
+          1,
+          100
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.out-wire",
+        "kind": "line",
+        "points": [
+          [
+            400,
+            470
+          ],
+          [
+            650,
+            470
+          ]
+        ],
+        "world_bounds": [
+          400,
+          470,
+          250,
+          1
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.r2",
+        "kind": "line",
+        "points": [
+          [
+            400,
+            520
+          ],
+          [
+            380,
+            540
+          ],
+          [
+            420,
+            570
+          ],
+          [
+            380,
+            600
+          ],
+          [
+            420,
+            630
+          ],
+          [
+            400,
+            650
+          ]
+        ],
+        "world_bounds": [
+          380,
+          520,
+          40,
+          130
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.lower-wire",
+        "kind": "line",
+        "points": [
+          [
+            400,
+            650
+          ],
+          [
+            400,
+            720
+          ]
+        ],
+        "world_bounds": [
+          400,
+          650,
+          1,
+          70
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.ground0",
+        "kind": "line",
+        "points": [
+          [
+            360.0,
+            720
+          ],
+          [
+            440.0,
+            720
+          ]
+        ],
+        "world_bounds": [
+          360.0,
+          720,
+          80.0,
+          1
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.ground1",
+        "kind": "line",
+        "points": [
+          [
+            375.0,
+            732
+          ],
+          [
+            425.0,
+            732
+          ]
+        ],
+        "world_bounds": [
+          375.0,
+          732,
+          50.0,
+          1
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.ground2",
+        "kind": "line",
+        "points": [
+          [
+            390.0,
+            744
+          ],
+          [
+            410.0,
+            744
+          ]
+        ],
+        "world_bounds": [
+          390.0,
+          744,
+          20.0,
+          1
+        ],
+        "stroke": "#252a30",
+        "width": 3
+      },
+      {
+        "id": "model.vin",
+        "kind": "text",
+        "text": "Vin",
+        "xy": [
+          320,
+          190
+        ],
+        "world_bounds": [
+          320,
+          190,
+          1,
+          1
+        ],
+        "size": 32,
+        "typography_role": "body"
+      },
+      {
+        "id": "model.r1-label",
+        "kind": "text",
+        "text": "R1",
+        "xy": [
+          470,
+          335
+        ],
+        "world_bounds": [
+          470,
+          335,
+          1,
+          1
+        ],
+        "size": 32,
+        "typography_role": "body"
+      },
+      {
+        "id": "model.vout",
+        "kind": "text",
+        "text": "Vout",
+        "xy": [
+          665,
+          442
+        ],
+        "world_bounds": [
+          665,
+          442,
+          1,
+          1
+        ],
+        "size": 32,
+        "typography_role": "body"
+      },
+      {
+        "id": "model.r2-label",
+        "kind": "text",
+        "text": "R2",
+        "xy": [
+          470,
+          570
+        ],
+        "world_bounds": [
+          470,
+          570,
+          1,
+          1
+        ],
+        "size": 32,
+        "typography_role": "body"
+      },
+      {
+        "id": "model.current",
+        "kind": "formula",
+        "latex": "I=\\frac{V_{\\mathrm{in}}}{R_1+R_2}",
+        "world_bounds": [
+          1050,
+          270,
+          1,
+          1
+        ],
+        "font_size": 46
+      },
+      {
+        "id": "model.divider",
+        "kind": "formula",
+        "latex": "V_{\\mathrm{out}}=I R_2=V_{\\mathrm{in}}\\frac{R_2}{R_1+R_2}",
+        "world_bounds": [
+          1050,
+          490,
+          1,
+          1
+        ],
+        "font_size": 46
+      },
+      {
+        "id": "model.why",
+        "kind": "text",
+        "text": "One current, two voltage drops.",
+        "xy": [
+          1050,
+          700
+        ],
+        "world_bounds": [
+          1050,
+          700,
+          1,
+          1
+        ],
+        "size": 32,
+        "typography_role": "body"
+      }
+    ],
+    "required_object_ids": [
+      "model.border",
+      "model.title",
+      "model.note",
+      "model.source",
+      "model.upper-wire",
+      "model.r1",
+      "model.middle-wire",
+      "model.out-wire",
+      "model.r2",
+      "model.lower-wire",
+      "model.ground0",
+      "model.ground1",
+      "model.ground2",
+      "model.vin",
+      "model.r1-label",
+      "model.vout",
+      "model.r2-label",
+      "model.current",
+      "model.divider",
+      "model.why"
+    ],
+    "camera_bounds": [
+      0,
+      0,
+      1920,
+      1080
+    ]
+  },
+  "voice": {
+    "name": "synthetic-fixture-not-a-provider",
+    "rate": "+0%"
+  },
+  "caption_refs": [
+    {
+      "id": "caption-speech-model",
+      "narration_id": "speech-model",
+      "source_range": [
+        0,
+        62
+      ]
+    },
+    {
+      "id": "caption-speech-transfer",
+      "narration_id": "speech-transfer",
+      "source_range": [
+        0,
+        81
+      ]
+    }
+  ],
+  "temporal": {
+    "caption_max_codepoints_per_second": 30,
+    "caption_min_seconds": 0.5,
+    "actions": [
+      {
+        "id": "reveal-current",
+        "target": "model.current",
+        "narration_id": "speech-model",
+        "earliest_offset": 0.3,
+        "deadline_offset": 0,
+        "min_reveal_seconds": 0.5,
+        "min_read_seconds": 1.2,
+        "after": []
+      },
+      {
+        "id": "reveal-divider",
+        "target": "model.divider",
+        "narration_id": "speech-transfer",
+        "earliest_offset": 0.2,
+        "deadline_offset": 0,
+        "min_reveal_seconds": 0.6,
+        "min_read_seconds": 1.5,
+        "after": [
+          "reveal-current"
+        ]
+      }
+    ]
+  },
+  "synthetic_fixture": {
+    "schema_version": "synthetic-sentence-fixture-1",
+    "sentences": [
+      {
+        "narration_id": "speech-model",
+        "duration_seconds": 3,
+        "gap_before_seconds": 0.2
+      },
+      {
+        "narration_id": "speech-transfer",
+        "duration_seconds": 4,
+        "gap_before_seconds": 0.3
+      }
+    ],
+    "tail_seconds": 0.5
+  }
+}

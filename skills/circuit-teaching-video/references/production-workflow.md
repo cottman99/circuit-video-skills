@@ -7,16 +7,18 @@ The authored lesson owns canonical formulas, visible text, assumptions, IDs, sou
 1. Inventory source claims and figures. Record source locators, rights, assumptions and evidence strength. Identify meaningful omissions rather than copying every decorative page element.
 2. Organize a knowledge graph, local reasoning boards and a camera route. Use a sufficient circuit model and explain approximations at the point they matter. Preserve dependencies without turning all content into a rigid tree.
 3. Author semantic objects and intent. Formula writing is followed by an explicit fully-visible reading window. Attention targets reference object IDs; no arbitrary pointer, zoom or chapter quota.
-4. If speech is requested, map canonical display and spoken text to real provider/recording evidence. Cache keys include text, voice and rate; preserve actual PCM hashes and timings. Sentence evidence stays sentence evidence.
-5. Compile. Validate IDs, capabilities, input/runtime/font fingerprints, graph cycles, layout boundaries, cumulative retention and declared read windows. Missing fields or unsupported capabilities stop production.
+4. If speech is requested, derive voice input from the complete formal manuscript through bounded source-span pronunciation transforms, then map actual provider/recording evidence back through stable IDs. Cache keys include text, voice and rate; preserve actual PCM hashes and timings. Sentence evidence stays sentence evidence.
+5. Compile. Validate IDs, capabilities, input/runtime/font fingerprints, graph cycles, layout boundaries, cumulative retention and declared read windows. Caption content is derived from formal manuscript references; missing/repeated source spans or independent caption text stop production. Missing fields or unsupported capabilities stop production.
 6. Render full preview and inspect actual visuals/audio. A full silent render can test timing/geometry, but cannot fulfill an audiovisual listening gate. Short native-density samples establish small-text/math clarity better than upscaled previews.
 7. Encode the selected output profile. Verify exact decoded frame count, tail, complete decode and internal transitions. Bind the final review to the actual final media hash. Keep scientific, structural, pixel, listening, delivery and learning-effect findings separate.
 
 ## Current public implementation
 
-`pipeline.py compile` binds one `circuit-lesson-1` JSON, selected fonts and runtime files. `pipeline.py render` checks that binding before rendering. It emits geometry/pointer/caption state for every encoded frame and validates exact decoded frames. Camera interpolation uses world coordinates once; captions stay screen-fixed. The example's seconds are authored animation timing, not measured narration.
+A bounded executable content-package route now connects full formal text, dedicated phonetic derivation, validated synthetic PCM/events, temporal SAT/UNSAT, a derived lesson and the existing frozen-scene renderer. See [executable workflow](executable-workflow.md) for exact nodes, commands and limits. The fixture is not real TTS, and the route does not yet implement the whole research-to-delivery workflow.
 
-Optional `voice_adapter.py` produces real sentence receipts from the same lesson's `narration` records. This release does not automatically retime every authored action from arbitrary provider events. Review and integrate measured timings into the authoritative lesson, then recompile. Do not copy the spoken transcript into a second edited source. The synthesis helper has not been live-provider tested in this release.
+`pipeline.py compile` binds one `circuit-lesson-1` JSON, selected fonts and runtime files. `pipeline.py render` checks that binding before rendering. It emits geometry/pointer/caption state for every encoded frame and validates exact decoded frames. Camera interpolation uses world coordinates once; captions stay screen-fixed. The compiler resolves their full formal text from source references, and the renderer consumes frozen text/units rather than a display-text fallback. The example's seconds are authored animation timing, not measured narration.
+
+Optional `voice_adapter.py` produces real sentence receipts from the same lesson's `narration` records. This release does not automatically retime every authored action from arbitrary provider events. Integrate measured timings into the authoritative lesson, explicitly bind the resulting audio/transcript/timing version with `bind-audio`, then recompile. The adapter preserves formal↔spoken text span maps; it does not claim they are word timestamps. Do not copy the spoken transcript into a second edited source. The synthesis helper has not been live-provider tested in this release.
 
 The generic `workflow.py`/`plan_knowledge.py` planning schema is an independent storyboard gate, not an automatic converter into production scene schema. An adapter that transforms planning artifacts must preserve IDs, source coverage and actual capabilities.
 
@@ -27,4 +29,12 @@ The generic `workflow.py`/`plan_knowledge.py` planning schema is an independent 
 - Source crop or PDF: reverify file hashes, crop geometry, rights and source fidelity.
 - Encoder/profile: invalidate encoded-media evidence and final-file review, not necessarily canonical content.
 
+The bounded runner persists every attempt separately. `latest.json` means latest attempt, including FAILED or UNSAT; `latest_success.json` is explicitly historical. Environment and output-profile fingerprints accompany media, and equal scene hashes do not guarantee equal encoded bytes across environments.
+
 A review document stating PASS is not an executed gate. Never fabricate a human watch/listen record or transform technical success into scientific or learning certification.
+
+The authoring architecture and migration steps are specified in the [single-master caption workflow](caption-workflow.md).
+
+## Source/model-gated production route
+
+Use the [version-2 pre-freeze contract](prefreeze-integration.md) to enforce selected source/model/master checks before the existing audiovisual chain. Legacy content and direct scene rendering remain unreviewed, explicitly ungated/replay-only technical routes. Machine checks do not authorize publication.

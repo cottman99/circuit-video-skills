@@ -1,0 +1,100 @@
+{
+  "schema_version": "course-production-profile-1",
+  "width": 1920,
+  "fps": 15,
+  "board_gap": 280,
+  "camera_pan_seconds": 0.6,
+  "asset_reveal_seconds": 0.6,
+  "object_reveal_seconds": 1.8,
+  "reveal_settle_seconds": 0.3,
+  "source_label_size": 20,
+  "heading_size": 38,
+  "pointer": {
+    "core_radius": 9,
+    "glow_padding": 30,
+    "whitespace_offset": 18
+  },
+  "voice": {
+    "name": "zh-CN-XiaoxiaoNeural",
+    "rate": "+0%"
+  },
+  "layout_contract": {
+    "schema_version": "whiteboard-layout-1",
+    "whiteboard": [
+      2,
+      2,
+      1916,
+      1076
+    ],
+    "world_viewport": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "content_clip": [
+      0,
+      0,
+      1920,
+      956
+    ],
+    "subtitle_zone": [
+      48,
+      968,
+      1824,
+      96
+    ],
+    "subtitles": {
+      "font_size": 34,
+      "minimum_font_size": 34,
+      "max_lines": 2,
+      "line_height": 44,
+      "horizontal_padding": 14,
+      "font_weight": 400,
+      "font_family": "Noto Sans CJK SC",
+      "color": "#252a30"
+    },
+    "metadata": {
+      "minimum_font_size": 22,
+      "max_lines_per_object": 2,
+      "line_gap": 5,
+      "object_gap": 10,
+      "source_minimum_font_size": 19
+    },
+    "board_zones": {
+      "title": [
+        0.03,
+        0.02,
+        0.45,
+        0.14
+      ],
+      "metadata": [
+        0.505,
+        0.025,
+        0.47,
+        0.13
+      ],
+      "body": [
+        0.03,
+        0.17,
+        0.94,
+        0.68
+      ],
+      "subtitle_reserve": [
+        0,
+        0.885,
+        1,
+        0.115
+      ]
+    },
+    "world_border_policy": "overview_only",
+    "caption_anchor": "screen_inside_persistent_whiteboard",
+    "overflow_policy": "reject_not_shrink"
+  },
+  "source_matte_policy": "White-backed line-art/notation PDF crops only; photographs or opaque white semantics need a separate authored alpha adapter",
+  "optional_scientific_checks": false,
+  "word_alignment_required": false,
+  "human_listening_required": false,
+  "max_caption_codepoints_per_second": 8,
+  "min_formula_read_seconds": 0.3
+}

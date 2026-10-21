@@ -25,7 +25,11 @@ class PipelineTests(unittest.TestCase):
     def test_nonpersistent_object(self):self.reject(lambda l:l['objects'][0].update(end=3))
     def test_premature_read_window(self):self.reject(lambda l:next(o for o in l['objects'] if o['kind']=='formula').update(read_window=[0,1]))
     def test_caption_overlap(self):self.reject(lambda l:l['captions'][1].update(start=2))
-    def test_caption_overflow(self):self.reject(lambda l:l['captions'][0].update(display_text='Very long caption. '*100))
+    def test_caption_overflow(self):
+        def change(l):
+            l['narration'][0]['text']='Very long caption. '*100
+            l['captions'][0]['source_range'][1]=len(l['narration'][0]['text'])
+        self.reject(change)
     def test_title_collision(self):self.reject(lambda l:next(o for o in l['objects'] if o['id']=='model.title').update(xy=[1050,50]))
     def test_scene_tamper(self):
         scene=p.compile_data(lesson());scene['duration']=100
@@ -52,7 +56,8 @@ class PipelineTests(unittest.TestCase):
     def test_caption_math_rasterizes_at_native_density(self):
         from unittest.mock import patch
         import logical_scene as native
-        l=lesson();l['captions'][0]['display_text']='Transconductance g_m remains explicit.'
+        l=lesson();l['narration'][0]['text']='Transconductance g_m remains explicit.'
+        l['captions'][0]['source_range'][1]=len(l['narration'][0]['text'])
         scene=p.compile_data(l)
         for width,expected_size in [(640,34),(3840,68)]:
             r=CanvasRenderer(scene,width=width,fps=15)

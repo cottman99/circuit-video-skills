@@ -1,0 +1,296 @@
+{
+  "schema_version": "source-model-script-1",
+  "scope": {
+    "title": "Original RC current-driven fixture",
+    "pages": [
+      1
+    ],
+    "not_full_course": true,
+    "rights": "Original public fixture."
+  },
+  "sources": [
+    {
+      "id": "source",
+      "path": "original_rc_source.txt",
+      "sha256": "36283701ad28ff18118fb91667c742123625d661615876d1fc5e0418fc954fe1",
+      "page_count": 1,
+      "media_type": "text/plain",
+      "authority": "Original authored ideal-model fixture.",
+      "rights": "original_public_fixture"
+    }
+  ],
+  "regions": [
+    {
+      "id": "r-source",
+      "source_ref": "source",
+      "page": 1,
+      "bbox": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "coordinate_system": "original_text_whole_document",
+      "artifact_path": "original_rc_source.txt",
+      "artifact_sha256": "36283701ad28ff18118fb91667c742123625d661615876d1fc5e0418fc954fe1",
+      "render_recipe": "not_applicable",
+      "description": "Complete original text, no external source or image.",
+      "inspection": {
+        "status": "original_text_inspected",
+        "method": "Author inspected original text and model.",
+        "limitation": "No independent physical validation."
+      }
+    }
+  ],
+  "claims": [
+    {
+      "id": "c-noise",
+      "text": "The declared null-network projection gives P(1+(2pi fRC)^2)/(gR)^2.",
+      "kind": "derived_result",
+      "region_refs": [
+        "r-source"
+      ],
+      "model_refs": [
+        "rc"
+      ],
+      "formula_refs": [
+        "noise"
+      ],
+      "coverage_status": "scripted",
+      "coverage_note": "Only abstract projection algebra is tested.",
+      "review_status": "not_professionally_reviewed"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a-linear",
+      "fact": "linear_small_signal",
+      "value": true,
+      "statement": "Positive constant R and C; linear time-invariant, zero initial conditions.",
+      "origin": "original_fixture",
+      "region_refs": [
+        "r-source"
+      ]
+    },
+    {
+      "id": "a-one_sided_per_hz_psd",
+      "fact": "one_sided_per_hz_psd",
+      "value": true,
+      "statement": "Declared synthetic test assumption: one_sided_per_hz_psd",
+      "origin": "original_fixture",
+      "region_refs": [
+        "r-source"
+      ]
+    },
+    {
+      "id": "a-unilateral_voltage_noise_projection",
+      "fact": "unilateral_voltage_noise_projection",
+      "value": true,
+      "statement": "Declared synthetic test assumption: unilateral_voltage_noise_projection",
+      "origin": "original_fixture",
+      "region_refs": [
+        "r-source"
+      ]
+    },
+    {
+      "id": "a-classical_white_noise_laws",
+      "fact": "classical_white_noise_laws",
+      "value": true,
+      "statement": "Declared synthetic test assumption: classical_white_noise_laws",
+      "origin": "original_fixture",
+      "region_refs": [
+        "r-source"
+      ]
+    },
+    {
+      "id": "a-uncorrelated_sources",
+      "fact": "uncorrelated_sources",
+      "value": true,
+      "statement": "Declared synthetic test assumption: uncorrelated_sources",
+      "origin": "original_fixture",
+      "region_refs": [
+        "r-source"
+      ]
+    }
+  ],
+  "models": [
+    {
+      "id": "rc",
+      "role": "unilateral_noise_null_network",
+      "description": "Original abstract unilateral-noise-null RC fixture.",
+      "nodes": [
+        "gnd",
+        "n"
+      ],
+      "reference_node": "gnd",
+      "components": [
+        {
+          "id": "r",
+          "kind": "R",
+          "from": "n",
+          "to": "gnd",
+          "value": "R"
+        },
+        {
+          "id": "c",
+          "kind": "C",
+          "from": "n",
+          "to": "gnd",
+          "value": "C"
+        }
+      ],
+      "parameters": [
+        {
+          "id": "R",
+          "unit": "ohm",
+          "domain": "positive",
+          "sample": 1200,
+          "meaning": "Resistance"
+        },
+        {
+          "id": "C",
+          "unit": "F",
+          "domain": "positive",
+          "sample": 3e-09,
+          "meaning": "Capacitance"
+        },
+        {
+          "id": "g",
+          "unit": "S",
+          "domain": "positive",
+          "sample": 0.02,
+          "meaning": "Synthetic transconductance"
+        },
+        {
+          "id": "P",
+          "unit": "A2/Hz",
+          "domain": "positive",
+          "sample": 1e-24,
+          "meaning": "Synthetic constant source PSD"
+        },
+        {
+          "id": "f",
+          "unit": "Hz",
+          "domain": "nonnegative",
+          "sample": 100000.0,
+          "meaning": "Frequency in Hz"
+        }
+      ],
+      "excitation": {
+        "symbol": "iin",
+        "from": "gnd",
+        "to": "n",
+        "unit": "A"
+      },
+      "assumption_refs": [
+        "a-linear",
+        "a-one_sided_per_hz_psd",
+        "a-unilateral_voltage_noise_projection",
+        "a-classical_white_noise_laws",
+        "a-uncorrelated_sources"
+      ],
+      "source_region_refs": [
+        "r-source"
+      ],
+      "topology_review": {
+        "status": "agent_transcribed_requires_professional_review",
+        "notes": "Original declared topology, not reconstructed from third-party content."
+      },
+      "formulas": [
+        {
+          "id": "noise",
+          "expression": "P*(1+(2*pi*f*R*C)**2)/(g*R)**2",
+          "unit": "A2/Hz",
+          "requirements": {
+            "one_sided_per_hz_psd": true,
+            "unilateral_voltage_noise_projection": true,
+            "classical_white_noise_laws": true,
+            "uncorrelated_sources": true
+          },
+          "derivation": {
+            "operation": "noise_projection",
+            "node": "n",
+            "transconductance": "g",
+            "intrinsic_psd": "P",
+            "frequency": "f"
+          },
+          "steps": [
+            "Find the null-network impedance by MNA.",
+            "Invert g times impedance and use the squared magnitude at j2pi f.",
+            "Multiply by adopted synthetic PSD P, not a device noise-law verification."
+          ],
+          "claim_refs": [
+            "c-noise"
+          ]
+        }
+      ]
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "projection",
+      "goal": "Check a declared synthetic noise projection.",
+      "prerequisite_ids": [],
+      "claim_refs": [
+        "c-noise"
+      ],
+      "formula_refs": [
+        "noise"
+      ],
+      "assumed_prerequisite": false
+    }
+  ],
+  "master": {
+    "revision": "original-noise-r1",
+    "sentences": [
+      {
+        "id": "s-noise",
+        "text": "For the declared abstract unilateral model, the null-network impedance is R/(1+sRC); the inverse of g times this impedance, squared in magnitude at s=j2pi f, multiplies the positive synthetic PSD P.",
+        "knowledge_refs": [
+          "projection"
+        ],
+        "claim_refs": [
+          "c-noise"
+        ],
+        "formula_refs": [
+          "noise"
+        ]
+      }
+    ],
+    "paragraphs": [
+      {
+        "id": "derivation",
+        "sentence_ids": [
+          "s-noise"
+        ]
+      }
+    ],
+    "sha256": "4b49f318dfa612bad5ccc75a581530102884533c934a668e036d6e9a3a89e018"
+  },
+  "caption_refs": [
+    {
+      "id": "cap-s-noise",
+      "span_id": "s-noise",
+      "source_range": [
+        0,
+        198
+      ],
+      "master_sha256": "4b49f318dfa612bad5ccc75a581530102884533c934a668e036d6e9a3a89e018",
+      "slice_sha256": "0503c42ff2e8063d09206a2933508158e0e57b0d306646f307f04cf160efac21"
+    }
+  ],
+  "coverage": {
+    "required_claim_ids": [
+      "c-noise"
+    ],
+    "required_formula_ids": [
+      "noise"
+    ],
+    "required_knowledge_ids": [
+      "projection"
+    ],
+    "excluded_scope": [
+      "No physical source-noise law or device topology is certified."
+    ]
+  }
+}

@@ -12,3 +12,9 @@ output/
 *.ttf
 *.otf
 *.ttc
+projects/
+.course-projects/
+*.onnx
+*.safetensors
+*.gguf
+*.ckpt

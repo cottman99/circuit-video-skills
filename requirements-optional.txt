@@ -2,4 +2,4 @@
 # Review its terms before installing or distributing a combined application.
 PyMuPDF>=1.26,<2
 # Optional explicit text transmission to the Edge TTS service.
-edge-tts>=7.2,<8
+edge-tts==7.3.1

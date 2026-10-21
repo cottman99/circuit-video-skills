@@ -1189,19 +1189,31 @@
       "id": "caption-model",
       "start": 0,
       "end": 3,
-      "display_text": "Model: ideal source, positive resistors, and no output load."
+      "narration_id": "speech-model",
+      "source_range": [
+        0,
+        60
+      ]
     },
     {
       "id": "caption-transfer",
       "start": 4,
       "end": 7,
-      "display_text": "Equal resistors give one half of the input voltage."
+      "narration_id": "speech-transfer",
+      "source_range": [
+        0,
+        51
+      ]
     },
     {
       "id": "caption-summary",
       "start": 7,
       "end": 8,
-      "display_text": "The full derivation remains on the persistent canvas."
+      "narration_id": "speech-summary",
+      "source_range": [
+        0,
+        53
+      ]
     }
   ],
   "teacher_actions": [
@@ -1261,5 +1273,25 @@
     "result.equal",
     "result.half",
     "result.value"
+  ],
+  "narration": [
+    {
+      "id": "speech-model",
+      "start": 0,
+      "end": 3,
+      "text": "Model: ideal source, positive resistors, and no output load."
+    },
+    {
+      "id": "speech-transfer",
+      "start": 4,
+      "end": 7,
+      "text": "Equal resistors give one half of the input voltage."
+    },
+    {
+      "id": "speech-summary",
+      "start": 7,
+      "end": 8,
+      "text": "The full derivation remains on the persistent canvas."
+    }
   ]
 }
