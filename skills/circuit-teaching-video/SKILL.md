@@ -2,7 +2,7 @@
 name: circuit-teaching-video
 description: Turn a complete selected circuit-lecture PDF unit into a source-faithful Chinese narrated whiteboard video, using one formal manuscript, full captions, measured sentence evidence and local rework. Also supports smaller script, drawing or storyboard edits.
 metadata:
-  version: 0.2.0
+  version: 0.2.1
 ---
 
 # Circuit teaching video
